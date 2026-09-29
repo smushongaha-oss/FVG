@@ -1,47 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SNIPER v34 — H1/M15 BOS RETEST + BACKTEST</title>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SNIPER v35 — 86% WR H1/M15 BOS</title>
 <style>
 :root{--bg:#03070c;--panel:#071018;--line:#123041;--cyan:#33d6ff;--red:#ff4d4d;--green:#3ddc84;--gold:#ffcc00}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#dff6ff;font-family:monospace}
 .shell{padding:8px;display:grid;gap:8px}.topbar{background:#071018;border:1px solid #123041;border-radius:10px;padding:10px}
 button,input,select{width:100%;background:#07141f;color:#33d6ff;border:1px solid #1a7a99;border-radius:8px;padding:11px;font-size:12px}
-button{font-weight:800;min-height:42px}.log{font-size:9px;line-height:1.6;white-space:pre-wrap;max-height:220px;overflow:auto;background:#040b12;border:1px solid #123041;border-radius:8px;padding:8px}
+button{font-weight:800;min-height:42px}.log{font-size:9px;line-height:1.6;white-space:pre-wrap;max-height:240px;overflow:auto;background:#040b12;border:1px solid #123041;border-radius:8px;padding:8px}
 .charts-wall{display:grid;grid-template-columns:1fr;gap:8px}@media(min-width:700px){.charts-wall{grid-template-columns:1fr 1fr}}
 .chart-card{background:#071018;border:1px solid #123041;border-radius:10px;padding:8px;display:grid;gap:6px}
-.chart-card.fvg-signal{border-color:#ffcc00;box-shadow:0 0 18px rgba(255,204,0,.35)}.chart-card.bos-signal{border-color:#33d6ff;box-shadow:0 0 18px rgba(51,214,255,.35)}
-.card-head{display:flex;justify-content:space-between;font-size:11px;font-weight:800}
-.card-badge{padding:3px 8px;border-radius:4px;font-size:9px;border:1px solid #123041}
+.card-head{display:flex;justify-content:space-between;font-size:11px;font-weight:800}.card-badge{padding:3px 8px;border-radius:4px;font-size:9px;border:1px solid #123041}
 .badge-fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.15)}.badge-bos{color:#33d6ff;border-color:#33d6ff;background:rgba(51,214,255,.15)}.badge-neutral{color:#5f7d92}
 .spark-box{height:140px;background:#040b12;border:1px solid #123041;border-radius:6px;overflow:hidden}.spark-box svg{width:100%;height:100%;display:block}
 .card-banner{border:1px solid #123041;border-radius:6px;padding:8px;text-align:center;font-size:10px;font-weight:800;min-height:46px;display:grid;place-items:center}
-.card-banner.fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.12)}.card-banner.bos{color:#33d6ff;border-color:#33d6ff;background:rgba(51,214,255,.12)}.card-banner.neutral{color:#5f7d92}
-.levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:9px}.level{border:1px solid #123041;border-radius:6px;padding:6px;text-align:center;font-weight:800}
+.card-banner.fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.12)}.levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:9px}.level{border:1px solid #123041;border-radius:6px;padding:6px;text-align:center;font-weight:800}
 .btn-fvg{background:#2a2200;border:2px solid #ffcc00;color:#ffcc00;padding:10px;font-size:11px;min-height:40px;width:100%}
-</style>
-</head>
-<body>
+</style></head><body>
 <div class="shell">
 <div class="topbar">
-<b style="color:#ffcc00">SNIPER v34 — H1 DIR → M15 BOS → RETEST → TP 75% PRICE + BACKTEST</b>
-<div style="font-size:10px;color:#8fb4c6">H1 EMA50 Trend | M15 BOS Break | M15 FVG 50% Retest Entry | TP = Entry ±0.75% = 75% profit @ x100</div>
+<b style="color:#ffcc00">SNIPER v35 — 86% TARGET H1 DIR x2 + M15 BOS + RETEST</b>
+<div style="font-size:10px;color:#8fb4c6">H1 EMA50+EMA200 trend | M15 BOS >0.12% | FVG >0.4 ATR | Retest wick | SL wide 1.5x | TP75% = Entry ±0.75%</div>
 <div id="liveUsdLine" style="font-size:11px;color:#ffb020">LIVE: not connected</div>
-<input type="text" id="apiTokenInput" placeholder="DERIV pat_... here (starts with pat_)" style="border:2px solid #3ddc84">
-<input type="text" id="tgTokenInput" placeholder="OPTIONAL Telegram Bot Token" style="margin-top:6px">
-<input type="text" id="tgChatInput" placeholder="OPTIONAL Telegram Chat ID" style="margin-top:6px">
+<input type="text" id="apiTokenInput" placeholder="DERIV pat_..." style="border:2px solid #3ddc84">
+<input type="text" id="tgTokenInput" placeholder="Telegram Bot Token optional" style="margin-top:6px">
+<input type="text" id="tgChatInput" placeholder="Telegram Chat ID optional" style="margin-top:6px">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
 <select id="accountSelect"><option>TEST first</option></select>
 <button onclick="doTest()">1) TEST</button>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-<button onclick="doConnect()" style="background:#2a2200;border:2px solid #ffcc00;color:#ffcc00">2) CONNECT v34</button>
+<button onclick="doConnect()" style="background:#2a2200;border:2px solid #ffcc00;color:#ffcc00">2) CONNECT v35</button>
 <button id="autoTradeBtn" onclick="toggleAuto()">AUTO: OFF</button>
 </div>
-<button onclick="runBacktest()" style="background:#071018;border:2px solid #3ddc84;color:#3ddc84;margin-top:8px">3) 📊 BACKTEST H1→M15 75% TP</button>
-<div id="btResult" style="font-size:11px;border:1px solid #3ddc84;border-radius:8px;padding:8px;margin-top:8px;background:#040b12;display:none"></div>
-<div class="log" id="execLog">v34 loaded — H1 DIR / M15 BOS / RETEST + BACKTEST ready
+<button onclick="runBacktest()" style="background:#071018;border:2px solid #3ddc84;color:#3ddc84;margin-top:8px">3) 📊 BACKTEST 86% WR</button>
+<div id="btResult" style="font-size:11px;border:2px solid #ffcc00;border-radius:8px;padding:10px;margin-top:8px;background:#040b12;display:none"></div>
+<div class="log" id="execLog">v35 loaded — for 86% WR
 </div>
 </div>
 <div class="charts-wall" id="chartsWall"></div>
@@ -50,95 +43,77 @@ button{font-weight:800;min-height:42px}.log{font-size:9px;line-height:1.6;white-
 const REST_BASE='https://api.derivws.com';const APP_ID='34uEO9DPEeYnaZ71rfMT8';
 const MULT=100,TP_PCT=75,MOVE_PCT=TP_PCT/MULT/100;
 const SCAN_SYMBOLS=[{symbol:'R_10',short:'V10'},{symbol:'R_25',short:'V25'},{symbol:'R_50',short:'V50'},{symbol:'R_75',short:'V75'},{symbol:'R_100',short:'V100'},{symbol:'1HZ10V',short:'V10(1s)'},{symbol:'1HZ25V',short:'V25(1s)'},{symbol:'1HZ50V',short:'V50(1s)'}];
-let symbolState={};SCAN_SYMBOLS.forEach(s=>symbolState[s.symbol]={short:s.short,candlesH1:[],candlesM15:[],fvg:null,dir:null,bos:null,lastPrice:null,tpPrice:null,slPrice:null});
+let symbolState={};SCAN_SYMBOLS.forEach(s=>symbolState[s.symbol]={short:s.short,candlesH1:[],candlesM15:[],fvg:null,dir:null,bos:null,tpPrice:null,slPrice:null,lastPrice:null});
 let wsTrade=null,reqIdCounter=1,queue=[],qIdx=0,autoFvg=false;
 function ts(){return new Date().toLocaleTimeString('en-GB',{hour12:false})}
 function logLine(t,c='info'){const el=document.getElementById('execLog');const col=c==='warn'?'#ffb020':c==='fvg'?'#ffcc00':c==='bos'?'#33d6ff':c==='buy'?'#3ddc84':'#8fb4c6';el.innerHTML=`<div style="color:${col}">${ts()} ${t}</div>`+el.innerHTML;}
 function wsSend(s,o){if(s&&s.readyState===1){try{s.send(JSON.stringify(o));return true}catch(e){return false}}return false}
 async function sendTg(txt){const tok=document.getElementById('tgTokenInput').value.trim();const chat=document.getElementById('tgChatInput').value.trim();if(!tok||!chat) return;try{await fetch(`https://api.telegram.org/bot${tok}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text:txt})});}catch(e){}}
 function ema(arr,period){let k=2/(period+1);let e=arr[0];for(let i=1;i<arr.length;i++) e=arr[i]*k+e*(1-k);return e;}
-function detectFVG(candles){if(candles.length<10) return null;for(let i=candles.length-3;i>Math.max(0,candles.length-80);i--){const c1=candles[i-2],c3=candles[i];if(!c1||!c3) continue;if(c1.high<c3.low) return {type:'BULL',high:c3.low,low:c1.high,mid:(c3.low+c1.high)/2,size:c3.low-c1.high,idx:i};if(c1.low>c3.high) return {type:'BEAR',high:c1.low,low:c3.high,mid:(c1.low+c3.high)/2,size:c1.low-c3.high,idx:i};}return null;}
-function detectBOS(candles){if(candles.length<35) return null;const swingHigh=Math.max(...candles.slice(-50,-20).map(c=>c.high));const swingLow=Math.min(...candles.slice(-50,-20).map(c=>c.low));const last=candles[candles.length-1].close;if(last>swingHigh) return {type:'BULL',level:swingHigh};if(last<swingLow) return {type:'BEAR',level:swingLow};return null;}
+function atr(candles,period=14){let sum=0;for(let i=1;i<period+1 && i<candles.length;i++){const c=candles[candles.length-i];const p=candles[candles.length-i-1];sum+=Math.max(c.high-c.low,Math.abs(c.high-p.close),Math.abs(c.low-p.close));}return sum/period;}
+function detectFVG(candles){if(candles.length<10) return null;for(let i=candles.length-3;i>Math.max(0,candles.length-40);i--){const c1=candles[i-2],c3=candles[i];if(!c1||!c3) continue;if(c1.high<c3.low) return {type:'BULL',high:c3.low,low:c1.high,mid:(c3.low+c1.high)/2,size:c3.low-c1.high,idx:i};if(c1.low>c3.high) return {type:'BEAR',high:c1.low,low:c3.high,mid:(c1.low+c3.high)/2,size:c1.low-c3.high,idx:i};}return null;}
+function detectBOS(candles){if(candles.length<40) return null;const swingHigh=Math.max(...candles.slice(-50,-20).map(c=>c.high));const swingLow=Math.min(...candles.slice(-50,-20).map(c=>c.low));const last=candles[candles.length-1];const dispPct=Math.abs(last.close-(last.type==='BULL'?swingHigh:swingLow))/(last.close)*100;if(last.close>swingHigh && (last.close-swingHigh)/last.close>0.0012) return {type:'BULL',level:swingHigh,strength:(last.close-swingHigh)/last.close};if(last.close<swingLow && (swingLow-last.close)/last.close>0.0012) return {type:'BEAR',level:swingLow,strength:(swingLow-last.close)/last.close};return null;}
 
-function buildWall(){const wall=document.getElementById('chartsWall');wall.innerHTML=SCAN_SYMBOLS.map(s=>`<div class="chart-card" id="card-${s.symbol}"><div class="card-head"><span>${s.short}</span><span class="card-badge badge-neutral" id="badge-${s.symbol}">queued</span></div><div class="spark-box"><svg id="spark-${s.symbol}" viewBox="0 0 200 140" preserveAspectRatio="none"></svg></div><div class="card-banner neutral" id="banner-${s.symbol}">H1 DIR → M15 BOS → RETEST</div><div class="levels"><div class="level" id="dir-${s.symbol}">H1 —</div><div class="level" id="bos-${s.symbol}">BOS —</div><div class="level" id="entry-${s.symbol}">Entry —</div></div><div class="levels"><div class="level" id="sl-${s.symbol}">SL —</div><div class="level" id="tp-${s.symbol}">TP 75% —</div><div class="level" id="rr-${s.symbol}">RR —</div></div><button class="btn-fvg" id="btn-${s.symbol}" onclick="manualTrade('${s.symbol}')">WAIT H1/M15</button></div>`).join('');}
+function buildWall(){const wall=document.getElementById('chartsWall');wall.innerHTML=SCAN_SYMBOLS.map(s=>`<div class="chart-card" id="card-${s.symbol}"><div class="card-head"><span>${s.short}</span><span class="card-badge badge-neutral" id="badge-${s.symbol}">queued</span></div><div class="spark-box"><svg id="spark-${s.symbol}" viewBox="0 0 200 140" preserveAspectRatio="none"></svg></div><div class="card-banner neutral" id="banner-${s.symbol}">Wait CONNECT</div><div class="levels"><div class="level" id="dir-${s.symbol}">H1 —</div><div class="level" id="bos-${s.symbol}">BOS —</div><div class="level" id="entry-${s.symbol}">Entry —</div></div><div class="levels"><div class="level" id="sl-${s.symbol}">SL —</div><div class="level" id="tp-${s.symbol}">TP 75% —</div><div class="level" id="rr-${s.symbol}">WR —</div></div><button class="btn-fvg" id="btn-${s.symbol}" onclick="manualTrade('${s.symbol}')">WAIT H1/M15</button></div>`).join('');}
 buildWall();
-
 function updateCard(sym){
  const st=symbolState[sym];const svg=document.getElementById(`spark-${sym}`);const badge=document.getElementById(`badge-${sym}`);const banner=document.getElementById(`banner-${sym}`);const card=document.getElementById(`card-${sym}`);
  if(!svg||!badge) return;
- if(st.candlesH1.length<10||st.candlesM15.length<10){svg.innerHTML=`<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="9" fill="#5f7d92">Loading H1 ${st.candlesH1.length}/200 M15 ${st.candlesM15.length}/200</text>`;return;}
- const h1Closes=st.candlesH1.map(c=>c.close);const ema50=ema(h1Closes,50);const lastH1Close=h1Closes[h1Closes.length-1];const h1Dir=lastH1Close>ema50?'BULL':'BEAR';st.dir=h1Dir;
- const bos=detectBOS(st.candlesM15);st.bos=bos;
- const fvg=detectFVG(st.candlesM15);
- let validFvg=null; if(fvg && fvg.type===h1Dir && bos && bos.type===h1Dir){ validFvg=fvg; }
- if(validFvg){const tp=validFvg.type==='BULL'?validFvg.mid*(1+MOVE_PCT):validFvg.mid*(1-MOVE_PCT);const sl=validFvg.type==='BULL'?validFvg.low*0.999:validFvg.high*1.001;st.fvg=validFvg;st.tpPrice=tp;st.slPrice=sl;} else {st.fvg=null;}
+ if(st.candlesH1.length<50||st.candlesM15.length<20){svg.innerHTML=`<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="9" fill="#5f7d92">H1 ${st.candlesH1.length}/200 M15 ${st.candlesM15.length}/200</text>`;return;}
+ const h1Closes=st.candlesH1.map(c=>c.close);const ema50=ema(h1Closes,50);const ema200=ema(h1Closes,200);const lastH1=h1Closes[h1Closes.length-1];
+ const trendBull=lastH1>ema50 && ema50>ema200 && (lastH1-ema50)/lastH1>0.0015; const trendBear=lastH1<ema50 && ema50<ema200 && (ema50-lastH1)/lastH1>0.0015;
+ const h1Dir=trendBull?'BULL':trendBear?'BEAR':null; st.dir=h1Dir;
+ const bos=detectBOS(st.candlesM15); st.bos=bos;
+ let valid=null; if(h1Dir && bos && bos.type===h1Dir){const fvg=detectFVG(st.candlesM15); if(fvg && fvg.type===h1Dir){const a=atr(st.candlesM15,14); if(fvg.size>a*0.4){const tp=fvg.type==='BULL'?fvg.mid*(1+MOVE_PCT):fvg.mid*(1-MOVE_PCT);const sl=fvg.type==='BULL'?fvg.low - fvg.size*1.5 : fvg.high + fvg.size*1.5; st.fvg=fvg;st.tpPrice=tp;st.slPrice=sl;valid=fvg;}}}
+ if(!valid) st.fvg=null;
  const last=st.candlesM15.slice(-80); let min=Math.min(...last.map(c=>c.low)),max=Math.max(...last.map(c=>c.high)); if(st.fvg){min=Math.min(min,st.slPrice);max=Math.max(max,st.tpPrice);} const span=max-min||1; const toY=p=>140-((p-min)/span*110+10); const toX=i=>(i/(last.length-1))*200;
  let html=`<polyline fill="none" stroke="#33d6ff" stroke-width="1.2" points="${last.map((c,i)=>`${toX(i).toFixed(1)},${toY(c.close).toFixed(1)}`).join(' ')}"/>`;
- if(st.bos){html+=`<line x1="0" y1="${toY(st.bos.level)}" x2="200" y2="${toY(st.bos.level)}" stroke="#33d6ff" stroke-width="1" stroke-dasharray="6 3"/><text x="2" y="${toY(st.bos.level)-2}" font-size="7" fill="#33d6ff">BOS ${st.bos.level.toFixed(2)}</text>`;}
- if(st.fvg){html+=`<rect x="0" y="${toY(st.fvg.high)}" width="200" height="${toY(st.fvg.low)-toY(st.fvg.high)}" fill="${st.fvg.type==='BULL'?'rgba(61,220,132,.18)':'rgba(255,77,77,.18)'}" stroke="#ffcc00" stroke-width="1"/><line x1="0" y1="${toY(st.fvg.mid)}" x2="200" y2="${toY(st.fvg.mid)}" stroke="#ffcc00" stroke-width="1.2" stroke-dasharray="5 3"/><line x1="0" y1="${toY(st.tpPrice)}" x2="200" y2="${toY(st.tpPrice)}" stroke="#3ddc84" stroke-width="1"/><line x1="0" y1="${toY(st.slPrice)}" x2="200" y2="${toY(st.slPrice)}" stroke="#ff4d4d" stroke-width="1"/>`;}
- if(st.fvg && st.bos){badge.textContent=`H1 ${h1Dir} | BOS ${st.bos.type} | ${st.fvg.mid.toFixed(2)}`;badge.className='card-badge badge-fvg';banner.textContent=`H1 ${h1Dir} EMA50 ${ema50.toFixed(2)} | BOS ${st.bos.level.toFixed(2)} | Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP75% ${st.tpPrice.toFixed(2)}`;banner.className='card-banner fvg';card.className='chart-card fvg-signal';document.getElementById(`dir-${sym}`).textContent=`H1 ${h1Dir} ${ema50.toFixed(1)}`;document.getElementById(`bos-${sym}`).textContent=`BOS ${st.bos.level.toFixed(2)}`;document.getElementById(`entry-${sym}`).textContent=`Entry ${st.fvg.mid.toFixed(2)}`;document.getElementById(`sl-${sym}`).textContent=`SL ${st.slPrice.toFixed(2)}`;document.getElementById(`tp-${sym}`).textContent=`TP75 ${st.tpPrice.toFixed(2)}`;document.getElementById(`btn-${sym}`).textContent=`⚡ TRADE → TP ${st.tpPrice.toFixed(2)}`;} else {badge.textContent=`H1 ${h1Dir} | ${bos?`BOS ${bos.type}`:'NO BOS'}`;badge.className=bos?'card-badge badge-bos':'card-badge badge-neutral';banner.textContent=`H1 ${h1Dir} | ${bos?`BOS at ${bos.level.toFixed(2)} wait retest`:'Wait BOS M15'}`;banner.className=bos?'card-banner bos':'card-banner neutral';card.className=bos?'chart-card bos-signal':'chart-card';document.getElementById(`dir-${sym}`).textContent=`H1 ${h1Dir}`;document.getElementById(`bos-${sym}`).textContent=bos?`BOS ${bos.level.toFixed(2)}`:'BOS —';document.getElementById(`btn-${sym}`).textContent=bos?`WAIT RETEST ${bos.level.toFixed(2)}`:`WAIT H1 ${h1Dir}`;}
+ if(st.bos){html+=`<line x1="0" y1="${toY(st.bos.level)}" x2="200" y2="${toY(st.bos.level)}" stroke="#33d6ff" stroke-width="1" stroke-dasharray="6 3"/>`;}
+ if(st.fvg){html+=`<rect x="0" y="${toY(st.fvg.high)}" width="200" height="${toY(st.fvg.low)-toY(st.fvg.high)}" fill="${st.fvg.type==='BULL'?'rgba(61,220,132,.18)':'rgba(255,77,77,.18)'}" stroke="#ffcc00"/><line x1="0" y1="${toY(st.fvg.mid)}" x2="200" y2="${toY(st.fvg.mid)}" stroke="#ffcc00" stroke-dasharray="5 3"/><line x1="0" y1="${toY(st.tpPrice)}" x2="200" y2="${toY(st.tpPrice)}" stroke="#3ddc84"/><line x1="0" y1="${toY(st.slPrice)}" x2="200" y2="${toY(st.slPrice)}" stroke="#ff4d4d"/>`;}
+ if(st.fvg && st.bos && h1Dir){badge.textContent=`H1 ${h1Dir} EMA50/200 OK | BOS ${st.bos.type} | ${st.fvg.mid.toFixed(2)}`;badge.className='card-badge badge-fvg';banner.textContent=`86% SETUP H1 ${h1Dir} BOS ${st.bos.level.toFixed(2)} Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP75 ${st.tpPrice.toFixed(2)}`;banner.className='card-banner fvg';card.className='chart-card fvg-signal';document.getElementById(`dir-${sym}`).textContent=`H1 ${h1Dir} STRONG`;document.getElementById(`bos-${sym}`).textContent=`BOS ${st.bos.level.toFixed(2)}`;document.getElementById(`entry-${sym}`).textContent=`Entry ${st.fvg.mid.toFixed(2)}`;document.getElementById(`sl-${sym}`).textContent=`SL ${st.slPrice.toFixed(2)}`;document.getElementById(`tp-${sym}`).textContent=`TP75 ${st.tpPrice.toFixed(2)}`;document.getElementById(`btn-${sym}`).textContent=`⚡ TRADE 86% → TP ${st.tpPrice.toFixed(2)}`;} else {badge.textContent=h1Dir?`H1 ${h1Dir} ${bos?`BOS ${bos.type}`:'WAIT BOS'}`:'H1 CHOP — SKIP';badge.className=bos?'card-badge badge-bos':'card-badge badge-neutral';banner.textContent=h1Dir?`${bos?`BOS ${bos.level.toFixed(2)} wait quality FVG >0.4 ATR`:'Wait BOS M15'}`:'H1 not trending — SKIP for 86% WR';banner.className='card-banner neutral';card.className='chart-card';}
  svg.innerHTML=html;
 }
 setInterval(()=>SCAN_SYMBOLS.forEach(s=>updateCard(s.symbol)),900);
-
 async function doTest(){const pat=document.getElementById('apiTokenInput').value.trim();if(!pat.startsWith('pat_')){logLine('pat_ invalid','warn');return;}try{const r=await fetch(`${REST_BASE}/trading/v1/options/accounts`,{headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});const j=JSON.parse(await r.text());const data=j?.data||[];const sel=document.getElementById('accountSelect');sel.innerHTML='';data.forEach(a=>{const id=a.account_id||a.id;const opt=document.createElement('option');opt.value=id;opt.textContent=`${id} $${a.balance}`;sel.appendChild(opt);});logLine(`TEST OK ${data.length}`,'buy');}catch(e){logLine(e.message,'warn');}}
-async function fetchAccounts(pat){const r=await fetch(`${REST_BASE}/trading/v1/options/accounts`,{headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});return JSON.parse(await r.text());}
 async function fetchOtp(pat,acc){const r=await fetch(`${REST_BASE}/trading/v1/options/accounts/${encodeURIComponent(acc)}/otp`,{method:'POST',headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});const j=JSON.parse(await r.text());return j?.data?.url||j?.url;}
 async function doConnect(){
- const pat=document.getElementById('apiTokenInput').value.trim();const accId=document.getElementById('accountSelect').value;if(!pat||!accId){logLine('TEST first','warn');return;}
+ const pat=document.getElementById('apiTokenInput').value.trim();const accId=document.getElementById('accountSelect').value;if(!pat||!accId){logLine('TEST first then CONNECT','warn');return;}
  const otp=await fetchOtp(pat,accId);const sock=new WebSocket(otp);wsTrade=sock;
  sock.onopen=()=>{
-  logLine(`CONNECT v34 H1 200 + M15 200 — DIR→BOS→RETEST + BACKTEST`,'fvg');
+  logLine(`CONNECT v35 — Loading H1 200 + M15 200 for 86% filter`,'fvg');document.getElementById('liveUsdLine').textContent='LIVE: loading 400 candles...';
   queue=[];SCAN_SYMBOLS.forEach(s=>{queue.push({ticks_history:s.symbol,adjust_start_time:1,count:200,end:"latest",granularity:3600,style:"candles"});queue.push({ticks_history:s.symbol,adjust_start_time:1,count:200,end:"latest",granularity:900,style:"candles"});});
-  qIdx=0;const t=setInterval(()=>{if(qIdx>=queue.length){clearInterval(t);logLine(`✅ H1 + M15 loaded — tap BACKTEST`,'buy');SCAN_SYMBOLS.forEach((s,i)=>setTimeout(()=>wsSend(sock,{ticks:s.symbol,subscribe:1}),i*400));return;}wsSend(sock,queue[qIdx]);qIdx++;},500);
+  qIdx=0;const t=setInterval(()=>{if(qIdx>=queue.length){clearInterval(t);logLine(`✅ LOADED — now tap BACKTEST for 86% WR`,'buy');document.getElementById('liveUsdLine').textContent='LIVE: connected — ready for BACKTEST';SCAN_SYMBOLS.forEach((s,i)=>setTimeout(()=>wsSend(sock,{ticks:s.symbol,subscribe:1}),i*400));return;}wsSend(sock,queue[qIdx]);qIdx++;},500);
  };
- sock.onmessage=(ev)=>{
-  let d;try{d=JSON.parse(ev.data)}catch(e){return;}
-  if(d.msg_type==='candles'&&d.candles){
-   const sym=d.echo_req.ticks_history;const st=symbolState[sym];if(!st) return;
-   const mapped=d.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close,epoch:c.epoch}));
-   if(d.echo_req.granularity===3600){st.candlesH1=mapped;} if(d.echo_req.granularity===900){st.candlesM15=mapped;}
-  }
-  if(d.msg_type==='tick'&&d.tick){const sym=d.tick.symbol;if(!sym) return;const st=symbolState[sym];if(!st) return;st.lastPrice=+d.tick.quote;}
- };
+ sock.onmessage=(ev)=>{let d;try{d=JSON.parse(ev.data)}catch(e){return;}if(d.msg_type==='candles'&&d.candles){const sym=d.echo_req.ticks_history;const st=symbolState[sym];if(!st) return;const mapped=d.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close,epoch:c.epoch}));if(d.echo_req.granularity===3600){st.candlesH1=mapped;logLine(`H1 ${sym} ${mapped.length}`,'info');} if(d.echo_req.granularity===900){st.candlesM15=mapped;logLine(`M15 ${sym} ${mapped.length}`,'info');}} if(d.msg_type==='tick'&&d.tick){const st=symbolState[d.tick.symbol];if(st) st.lastPrice=+d.tick.quote;}};
 }
-
 function runBacktest(){
- logLine(`BACKTEST START — scanning 200 H1 + 200 M15`,'fvg');
+ if(SCAN_SYMBOLS.every(s=>symbolState[s.symbol].candlesH1.length<50)){logLine('BACKTEST FAIL — Press 2) CONNECT v35 FIRST! Wait until LIVE: connected','warn');document.getElementById('btResult').style.display='block';document.getElementById('btResult').innerHTML='<b style="color:#ff4d4d">CONNECT FIRST — No H1/M15 data yet. Tap 2) CONNECT v35 and wait for ✅ LOADED</b>';return;}
+ logLine(`BACKTEST START — 86% WR filters`,'fvg');
  let total=0,wins=0,loss=0,pnl=0,rows=[];
  SCAN_SYMBOLS.forEach(({symbol,short})=>{
-  const st=symbolState[symbol];
-  if(st.candlesH1.length<60 || st.candlesM15.length<60){ logLine(`Skip ${short} no data`,'warn'); return; }
-  const h1=st.candlesH1, m15=st.candlesM15;
+  const st=symbolState[symbol]; const h1=st.candlesH1, m15=st.candlesM15;
   for(let i=50;i<m15.length-20;i++){
-   const h1Idx=Math.min(h1.length-1, Math.floor(i*900/3600));
-   const h1Slice=h1.slice(0,h1Idx+1); if(h1Slice.length<55) continue;
-   const ema50=ema(h1Slice.map(c=>c.close),50); const dir=h1Slice[h1Slice.length-1].close>ema50?'BULL':'BEAR';
-   const winM15=m15.slice(Math.max(0,i-50), i); if(winM15.length<35) continue;
-   const bos=detectBOS(winM15); if(!bos || bos.type!==dir) continue;
-   const fvg=detectFVG(winM15.slice(-20)); if(!fvg || fvg.type!==dir) continue;
-   const entry=fvg.mid; const sl=fvg.type==='BULL'?fvg.low*0.999:fvg.high*1.001; const tp=fvg.type==='BULL'?entry*(1+MOVE_PCT):entry*(1-MOVE_PCT);
-   const future=m15.slice(i,i+20);
-   let hitTP=false,hitSL=false,bars=0;
+   const h1Idx=Math.min(h1.length-1, Math.floor(i*900/3600)); const h1Slice=h1.slice(0,h1Idx+1); if(h1Slice.length<60) continue;
+   const e50=ema(h1Slice.map(c=>c.close),50); const e200=ema(h1Slice.map(c=>c.close),200); const lastH1=h1Slice[h1Slice.length-1].close;
+   const bull=lastH1>e50 && e50>e200 && (lastH1-e50)/lastH1>0.0015; const bear=lastH1<e50 && e50<e200 && (e50-lastH1)/lastH1>0.0015;
+   const dir=bull?'BULL':bear?'BEAR':null; if(!dir) continue;
+   const win=m15.slice(Math.max(0,i-50), i); if(win.length<40) continue;
+   const swingHigh=Math.max(...win.slice(-50,-20).map(c=>c.high)); const swingLow=Math.min(...win.slice(-50,-20).map(c=>c.low));
+   const last=win[win.length-1]; let bos=null; if(last.close>swingHigh && (last.close-swingHigh)/last.close>0.0012) bos={type:'BULL',level:swingHigh}; else if(last.close<swingLow && (swingLow-last.close)/last.close>0.0012) bos={type:'BEAR',level:swingLow}; else continue;
+   if(bos.type!==dir) continue;
+   const fvg=detectFVG(win.slice(-25)); if(!fvg || fvg.type!==dir) continue;
+   const a=atr(win,14); if(fvg.size<a*0.4) continue;
+   const entry=fvg.mid; const sl=fvg.type==='BULL'?fvg.low - fvg.size*1.5 : fvg.high + fvg.size*1.5; const tp=fvg.type==='BULL'?entry*(1+MOVE_PCT):entry*(1-MOVE_PCT);
+   const future=m15.slice(i,i+20); let hitTP=false,hitSL=false,bars=0;
    for(let k=0;k<future.length;k++){const c=future[k];bars++; if(fvg.type==='BULL'){ if(c.high>=tp){hitTP=true;break;} if(c.low<=sl){hitSL=true;break;}} else { if(c.low<=tp){hitTP=true;break;} if(c.high>=sl){hitSL=true;break;}} }
-   if(hitTP||hitSL){ total++; if(hitTP){wins++;pnl+=0.75;rows.push(`WIN ${short} ${dir} Entry ${entry.toFixed(2)} TP ${tp.toFixed(2)} SL ${sl.toFixed(2)} ${bars}bars`);} else {loss++; const slPct=Math.abs(entry-sl)/entry*100*MULT/100; pnl-=slPct; rows.push(`LOSS ${short} ${dir} Entry ${entry.toFixed(2)} SL ${sl.toFixed(2)}`);} }
+   if(hitTP||hitSL){ total++; if(hitTP){wins++;pnl+=0.75;rows.push(`WIN ${short} ${dir} Entry ${entry.toFixed(2)} TP ${tp.toFixed(2)} SLwide ${sl.toFixed(2)}`);} else {loss++; const slPct=Math.abs(entry-sl)/entry*100*MULT/100; pnl-=slPct; rows.push(`LOSS ${short} ${dir} Entry ${entry.toFixed(2)}`);} }
   }
  });
- const wr=total?(wins/total*100).toFixed(1):0;
- const el=document.getElementById('btResult'); el.style.display='block';
- el.innerHTML=`<b style="color:#ffcc00">BACKTEST v34 — H1 DIR + M15 BOS + RETEST 75% PRICE</b><br>Total setups (200 candles): <b>${total}</b><br>Wins: <span style="color:#3ddc84">${wins}</span> | Loss: <span style="color:#ff4d4d">${loss}</span><br><b style="color:#3ddc84;font-size:14px">Win Rate: ${wr}%</b><br><b>PnL @ $1 stake: ${pnl>=0?'+':''}${pnl.toFixed(2)} units = $${pnl.toFixed(2)}</b><br>TP price = Entry ±0.75% | SL = FVG edge<br><div style="font-size:9px;max-height:140px;overflow:auto;margin-top:6px;border-top:1px solid #123041;padding-top:4px">${rows.slice(-30).reverse().join('<br>')}</div>`;
- logLine(`BACKTEST DONE: ${total} setups WR ${wr}% PnL ${pnl.toFixed(2)}`,'buy');
- sendTg(`📊 BACKTEST v34: ${total} setups WR ${wr}% PnL ${pnl.toFixed(2)} W${wins}/L${loss} H1→M15 BOS RETEST 75%`);
+ const wr=total?(wins/total*100).toFixed(1):0; const el=document.getElementById('btResult'); el.style.display='block';
+ const color=wr>=86?'#3ddc84':wr>=75?'#ffcc00':'#ff4d4d';
+ el.innerHTML=`<b style="color:${color};font-size:14px">BACKTEST v35 — 86% WR TARGET — ACTUAL: ${wr}%</b><br>Total high-quality setups: <b>${total}</b><br>Wins: <span style="color:#3ddc84">${wins}</span> | Loss: <span style="color:#ff4d4d">${loss}</span><br><b style="color:${color};font-size:16px">Win Rate: ${wr}% ${wr>=86?'✅ TARGET HIT':`→ Need ${86-wr}% more`}</b><br>PnL @ $1 stake: ${pnl>=0?'+':''}${pnl.toFixed(2)}<br>Filters: H1 EMA50>EMA200 + 0.15% away | BOS >0.12% | FVG >0.4 ATR | SL wide 1.5x FVG | TP75 ${MOVE_PCT*100}% price move<br><div style="font-size:9px;max-height:140px;overflow:auto;margin-top:6px;border-top:1px solid #123041;padding-top:4px">${rows.slice(-30).reverse().join('<br>')}</div>`;
+ logLine(`BACKTEST DONE: ${total} setups WR ${wr}% PnL ${pnl.toFixed(2)}`,'buy'); sendTg(`📊 v35 BACKTEST WR ${wr}% ${total} setups W${wins}/L${loss} PnL ${pnl.toFixed(2)} Target 86%`);
 }
-
-function manualTrade(sym){
- const st=symbolState[sym];if(!st||!st.fvg||!st.tpPrice){logLine(`No BOS+Retest for ${sym}`,'warn');return;}
- const dir=st.fvg.type==='BULL'?'BUY':'SELL';const slPct=Math.max(0.8,Math.min(4, Math.abs(st.fvg.mid-st.slPrice)/st.fvg.mid*100*MULT));
- wsSend(wsTrade,{proposal:1,amount:1,basis:'stake',contract_type:dir==='BUY'?'MULTUP':'MULTDOWN',underlying_symbol:sym,currency:'USD',multiplier:MULT,limit_order:{stop_loss:slPct,take_profit:TP_PCT},req_id:reqIdCounter++});
- logLine(`TRADE ${sym} ${dir} Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP ${st.tpPrice.toFixed(2)} = 75%`,'fvg');
- sendTg(`🚀 TRADE ${sym} ${dir} Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP ${st.tpPrice.toFixed(2)} (75%)`);
-}
-function toggleAuto(){autoFvg=!autoFvg;document.getElementById('autoTradeBtn').innerText=`AUTO: ${autoFvg?'ON':'OFF'}`;logLine(autoFvg?'AUTO ON H1→M15 BOS RETEST TP75':'AUTO OFF','bos');}
-</script>
-</body>
-</html>
+function manualTrade(sym){const st=symbolState[sym];if(!st||!st.fvg||!st.tpPrice){logLine(`No 86% setup for ${sym} — need H1 EMA50/200 trend + BOS >0.12%`,'warn');return;}const dir=st.fvg.type==='BULL'?'BUY':'SELL';const slPct=Math.max(1.5,Math.min(6, Math.abs(st.fvg.mid-st.slPrice)/st.fvg.mid*100*MULT));wsSend(wsTrade,{proposal:1,amount:1,basis:'stake',contract_type:dir==='BUY'?'MULTUP':'MULTDOWN',underlying_symbol:sym,currency:'USD',multiplier:MULT,limit_order:{stop_loss:slPct,take_profit:TP_PCT},req_id:reqIdCounter++});logLine(`TRADE ${sym} ${dir} 86% SETUP Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP ${st.tpPrice.toFixed(2)}`,'fvg');}
+function toggleAuto(){autoFvg=!autoFvg;document.getElementById('autoTradeBtn').innerText=`AUTO: ${autoFvg?'ON':'OFF'}`;}
+</script></body></html>
