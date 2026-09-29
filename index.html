@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SNIPER v29 — FVG 75% TP</title>
+<style>
+:root{--bg:#03070c;--panel:#071018;--line:#123041;--cyan:#33d6ff;--red:#ff4d4d;--green:#3ddc84;--muted:#5f7d92;--gold:#ffcc00}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#dff6ff;font-family:'Courier New',monospace}
+.shell{padding:8px;display:grid;gap:8px}
+.topbar,.panel{background:#071018;border:1px solid #123041;border-radius:10px;padding:10px}
+input,select,button{width:100%;background:#07141f;color:#33d6ff;border:1px solid #1a7a99;border-radius:8px;padding:11px;font-size:12px}
+button{font-weight:800;min-height:42px;cursor:pointer}
+.log{font-size:9px;line-height:1.6;white-space:pre-wrap;max-height:180px;overflow:auto;background:#040b12;border:1px solid #123041;border-radius:8px;padding:8px}
+.charts-wall{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:600px){.charts-wall{grid-template-columns:1fr 1fr}}
+@media(min-width:1100px){.charts-wall{grid-template-columns:1fr 1fr 1fr}}
+.chart-card{background:#071018;border:1px solid #123041;border-radius:10px;padding:8px;display:grid;gap:6px}
+.chart-card.trend-buy{border-color:#3ddc84;box-shadow:0 0 14px rgba(61,220,132,.25)}.chart-card.trend-sell{border-color:#ff4d4d;box-shadow:0 0 14px rgba(255,77,77,.25)}
+.chart-card.fvg-signal{border-color:#ffcc00;box-shadow:0 0 18px rgba(255,204,0,.35)}
+.card-head{display:flex;justify-content:space-between;font-size:11px;font-weight:800}
+.card-badge{padding:3px 8px;border-radius:4px;font-size:10px;border:1px solid #123041}
+.badge-buy{color:#3ddc84;border-color:#3ddc84;background:rgba(61,220,132,.12)}.badge-sell{color:#ff4d4d;border-color:#ff4d4d;background:rgba(255,77,77,.12)}.badge-fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.15)}.badge-neutral{color:#5f7d92}
+.spark-box{height:130px;background:#040b12;border:1px solid #123041;border-radius:6px;overflow:hidden;position:relative}.spark-box svg{width:100%;height:100%}
+.card-banner{border:1px solid #123041;border-radius:6px;padding:8px;text-align:center;font-size:10px;font-weight:800;min-height:44px;display:grid;place-items:center}
+.card-banner.buy{color:#3ddc84;border-color:#3ddc84;background:rgba(61,220,132,.08)}.card-banner.sell{color:#ff4d4d;border-color:#ff4d4d;background:rgba(255,77,77,.08)}.card-banner.fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.12)}.card-banner.neutral{color:#5f7d92}
+.levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:9px}
+.level{border:1px solid #123041;border-radius:6px;padding:6px;text-align:center}
+.level.entry{border-color:#ffcc00;color:#ffcc00;background:rgba(255,204,0,.08)}.level.sl{border-color:#ff4d4d;color:#ff4d4d;background:rgba(255,77,77,.06)}.level.tp{border-color:#3ddc84;color:#3ddc84;background:rgba(61,220,132,.08)}
+.btn-buy-sm{background:#082d18;border:1px solid #3ddc84;color:#3ddc84;padding:6px;font-size:9px;min-height:32px}.btn-sell-sm{background:#2d0808;border:1px solid #ff4d4d;color:#ff4d4d;padding:6px;font-size:9px;min-height:32px}
+.btn-fvg{background:#2a2200;border:1px solid #ffcc00;color:#ffcc00;padding:8px;font-size:10px;min-height:36px;grid-column:span 2}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="topbar">
+<b style="color:#ffcc00">SNIPER v29 — FVG 75% TAKE PROFIT</b>
+<div style="font-size:10px;color:#5f7d92">FVG = Fair Value Gap | Entry = 50% of gap | SL = outside gap | TP = 75% profit lock</div>
+<div id="liveUsdLine" style="font-size:11px;color:#ffb020">LIVE: not connected</div>
+<div id="tradeStatusText" style="font-size:10px;color:#5f7d92">paste pat_ → TEST → CONNECT</div>
+<input type="text" id="apiTokenInput" placeholder="Deriv pat_...">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+<select id="accountSelect"><option>TEST first</option></select>
+<button onclick="window.doTest()">1) TEST</button>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+<button onclick="window.doConnect()" style="background:#2a2200;border:2px solid #ffcc00;color:#ffcc00">2) CONNECT v29 FVG</button>
+<button id="autoTradeBtn" onclick="window.toggleAuto()">AUTO FVG: OFF</button>
+</div>
+<div id="acctLine" style="font-size:10px;color:#5f7d92;margin-top:8px;border:1px solid #123041;border-radius:6px;padding:6px">v29 FVG Mode: Finds unfilled gaps, waits for retest, TP 75%</div>
+<div class="log" id="execLog">v29 FVG 75% loaded
+</div>
+</div>
+<div class="charts-wall" id="chartsWall"></div>
+</div>
+<script>
+const REST_BASE='https://api.derivws.com';const APP_ID='34uEO9DPEeYnaZ71rfMT8';
+const SCAN_SYMBOLS=[
+  {symbol:'R_10',short:'V10'},{symbol:'R_25',short:'V25'},{symbol:'R_50',short:'V50'},{symbol:'R_75',short:'V75'},{symbol:'R_100',short:'V100'},
+  {symbol:'1HZ10V',short:'V10(1s)'},{symbol:'1HZ15V',short:'V15(1s)'},{symbol:'1HZ25V',short:'V25(1s)'},{symbol:'1HZ30V',short:'V30(1s)'},{symbol:'1HZ50V',short:'V50(1s)'},{symbol:'1HZ75V',short:'V75(1s)'},{symbol:'1HZ90V',short:'V90(1s)'},{symbol:'1HZ100V',short:'V100(1s)'}
+];
+let symbolState={};SCAN_SYMBOLS.forEach(s=>{symbolState[s.symbol]={short:s.short,candlesH1:[],candlesM15:[],candlesM5:[],fvg:null,lastPrice:null,entry:null,sl:null,tp75:null,fvgDir:null}});
+let wsTrade=null,reqIdCounter=1,tradePing=null,currentPat=null,currentAccountId=null,queue=[],qIdx=0,autoFvg=false;
+
+function ts(){return new Date().toLocaleTimeString('en-GB',{hour12:false})}
+function logLine(t,c='info'){const el=document.getElementById('execLog');const col=c==='warn'?'#ffb020':c==='fvg'?'#ffcc00':c==='buy'?'#3ddc84':c==='sell'?'#ff4d4d':'#8fb4c6';el.innerHTML=`<div style="color:${col}">${ts()} ${t}</div>`+el.innerHTML;}
+function wsSend(s,o){if(s&&s.readyState===1){try{s.send(JSON.stringify(o));return true}catch(e){return false}}return false}
+
+// --- FVG DETECTOR CORE ---
+function detectFVG(candles){
+ // Returns newest unfilled FVG
+ for(let i=candles.length-3;i>=2;i--){
+  const c1=candles[i-2], c2=candles[i-1], c3=candles[i];
+  // Bullish FVG: c1.high < c3.low
+  if(c1.high < c3.low){
+   const gapHigh=c3.low, gapLow=c1.high, gapSize=gapHigh-gapLow;
+   // check if not yet filled (price hasn't closed inside)
+   let filled=false;
+   for(let j=i+1;j<candles.length;j++){ if(candles[j].low <= (gapHigh+gapLow)/2) { /* retest but not fully closed below? */ } if(candles[j].close < gapLow) filled=true; }
+   if(!filled && gapSize>0) return {type:'BULL', idx:i, high:gapHigh, low:gapLow, mid:(gapHigh+gapLow)/2, size:gapSize, age:candles.length-1-i};
+  }
+  // Bearish FVG: c1.low > c3.high
+  if(c1.low > c3.high){
+   const gapHigh=c1.low, gapLow=c3.high, gapSize=gapHigh-gapLow;
+   let filled=false;
+   for(let j=i+1;j<candles.length;j++){ if(candles[j].close > gapHigh) filled=true; }
+   if(!filled && gapSize>0) return {type:'BEAR', idx:i, high:gapHigh, low:gapLow, mid:(gapHigh+gapLow)/2, size:gapSize, age:candles.length-1-i};
+  }
+ }
+ return null;
+}
+
+function buildWall(){const wall=document.getElementById('chartsWall');wall.innerHTML=SCAN_SYMBOLS.map(s=>`<div class="chart-card" id="card-${s.symbol}"><div class="card-head"><span>${s.short}</span><span class="card-badge badge-neutral" id="badge-${s.symbol}">scan</span></div><div class="spark-box"><svg id="spark-${s.symbol}" viewBox="0 0 200 130"></svg></div><div class="card-banner neutral" id="banner-${s.symbol}">scanning FVG...</div><div class="levels"><div class="level entry" id="entry-${s.symbol}">Entry —</div><div class="level sl" id="sl-${s.symbol}">SL —</div><div class="level tp" id="tp-${s.symbol}">TP 75% —</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button class="btn-sell-sm" onclick="window.manualFvg('${s.symbol}','SELL')">SELL FVG</button><button class="btn-buy-sm" onclick="window.manualFvg('${s.symbol}','BUY')">BUY FVG</button></div><div style="margin-top:4px"><button class="btn-fvg" onclick="window.manualFvg('${s.symbol}','AUTO')">⚡ TRADE FVG 75% TP</button></div></div>`).join('');}
+buildWall();
+
+function updateFvgCard(sym){
+ const st=symbolState[sym];if(!st)return;
+ const badge=document.getElementById(`badge-${sym}`);const banner=document.getElementById(`banner-${sym}`);const card=document.getElementById(`card-${sym}`);const svg=document.getElementById(`spark-${sym}`);
+ if(!badge||!banner||!card||!svg)return;
+ const src=st.candlesM15.length?st.candlesM15:st.candlesH1;
+ if(src.length>=10){
+  const last=src.slice(-60);let min=Math.min(...last.map(c=>c.low)),max=Math.max(...last.map(c=>c.high));
+  if(st.fvg){min=Math.min(min,st.fvg.low);max=Math.max(max,st.fvg.high);}
+  const span=max-min||1;const toY=p=>130-((p-min)/span*100+10);
+  let html=`<polyline fill="none" stroke="#33d6ff" stroke-width="1.2" points="${last.map((c,i)=>`${(i/(last.length-1)*200).toFixed(1)},${toY(c.close).toFixed(1)}`).join(' ')}"/>`;
+  if(st.fvg){
+   const y1=toY(st.fvg.high), y2=toY(st.fvg.low);
+   html+=`<rect x="0" y="${Math.min(y1,y2)}" width="200" height="${Math.abs(y1-y2)}" fill="${st.fvg.type==='BULL'?'rgba(61,220,132,.18)':'rgba(255,77,77,.18)'}" stroke="${st.fvg.type==='BULL'?'#3ddc84':'#ff4d4d'}" stroke-dasharray="3 3"/>`;
+   html+=`<line x1="0" y1="${toY(st.fvg.mid)}" x2="200" y2="${toY(st.fvg.mid)}" stroke="#ffcc00" stroke-width="1" stroke-dasharray="5 3"/><text x="2" y="${toY(st.fvg.mid)-2}" font-size="7" fill="#ffcc00">FVG 50% ${st.fvg.mid.toFixed(2)}</text>`;
+  }
+  if(st.entry) html+=`<line x1="0" y1="${toY(st.entry)}" x2="200" y2="${toY(st.entry)}" stroke="#ffcc00" stroke-width="1"/><text x="120" y="${toY(st.entry)-2}" font-size="7" fill="#ffcc00">ENTRY</text>`;
+  svg.innerHTML=html;
+ }
+ if(st.fvg && st.entry){
+  const dir=st.fvg.type==='BULL'?'BUY':'SELL';
+  badge.textContent=`FVG ${dir} ${st.fvg.size.toFixed(2)} gap age ${st.fvg.age}`;badge.className='card-badge badge-fvg';
+  banner.textContent=`FVG ${dir} — Entry ${st.entry.toFixed(2)} | SL ${st.sl.toFixed(2)} | TP 75%`;banner.className='card-banner fvg';
+  card.className='chart-card fvg-signal';
+  document.getElementById(`entry-${sym}`).textContent=`Entry ${st.entry.toFixed(2)}`;
+  document.getElementById(`sl-${sym}`).textContent=`SL ${st.sl.toFixed(2)}`;
+  document.getElementById(`tp-${sym}`).textContent=`TP 75% profit`;
+ }else{
+  badge.textContent=st.fvg?`FVG found but waiting retest`:`NO FVG — scanning`;badge.className='card-badge badge-neutral';
+  banner.textContent=st.fvg?`FVG ${st.fvg.type} @${st.fvg.mid.toFixed(2)} waiting price to retest 50%`:`Scanning ${src.length} candles for gaps...`;banner.className='card-banner neutral';
+  card.className='chart-card';
+  document.getElementById(`entry-${sym}`).textContent='Entry —';
+  document.getElementById(`sl-${sym}`).textContent='SL —';
+  document.getElementById(`tp-${sym}`).textContent='TP 75% —';
+ }
+}
+setInterval(()=>SCAN_SYMBOLS.forEach(s=>updateFvgCard(s.symbol)),800);
+
+function feedFvg(sym,price,epoch,gran){
+ const st=symbolState[sym];if(!st)return;st.lastPrice=price;
+ const arr=gran===900?st.candlesM15:gran===3600?st.candlesH1:st.candlesM5;
+ const ce=Math.floor(epoch/gran)*gran;
+ if(arr.length===0)arr.push({open:price,high:price,low:price,close:price,epoch:ce});
+ else{const last=arr[arr.length-1];if(last.epoch===ce){last.high=Math.max(last.high,price);last.low=Math.min(last.low,price);last.close=price;}else if(epoch>last.epoch){arr.push({open:price,high:price,low:price,close:price,epoch:ce});if(arr.length>300)arr.shift();}}
+ const fvg=detectFVG(arr);
+ if(fvg){
+  st.fvg=fvg;
+  st.fvgDir=fvg.type==='BULL'?'BUY':'SELL';
+  st.entry=fvg.mid;
+  if(fvg.type==='BULL'){st.sl=fvg.low - fvg.size*0.25; st.tp75=fvg.high + fvg.size*2;}
+  else{st.sl=fvg.high + fvg.size*0.25; st.tp75=fvg.low - fvg.size*2;}
+  // AUTO FVG TRIGGER: if price within 0.3% of 50% line → signal
+  const dist=Math.abs(price - fvg.mid)/price;
+  if(autoFvg && dist < 0.003 && fvg.age <= 10){
+   logLine(`⚡ FVG AUTO ${sym} ${fvg.type} Entry ${fvg.mid.toFixed(2)} dist ${(dist*100).toFixed(3)}%`,'fvg');
+   window.manualFvg(sym, fvg.type==='BULL'?'BUY':'SELL');
+  }
+ }
+}
+
+window.manualFvg=(sym,dir)=>{
+ const st=symbolState[sym];if(!st||!st.entry){logLine(`No FVG yet for ${sym}`,'warn');return;}
+ const finalDir=dir==='AUTO'?st.fvgDir:dir;
+ if(!finalDir){logLine('No dir','warn');return;}
+ const reqId=reqIdCounter++;
+ const slPct=Math.max(1, Math.min(5, Math.abs(st.entry-st.sl)/st.entry*100));
+ // 75% TP lock
+ const tpPct=75;
+ wsSend(wsTrade,{proposal:1,amount:1,basis:'stake',contract_type:finalDir==='BUY'?'MULTUP':'MULTDOWN',underlying_symbol:sym,currency:'USD',multiplier:100,limit_order:{stop_loss:slPct,take_profit:tpPct},req_id:reqId});
+ logLine(`FVG ${sym} ${finalDir} ENTRY ${st.entry.toFixed(2)} SL ${st.sl.toFixed(2)} → TP ${tpPct}% LOCKED`,'fvg');
+};
+
+window.doTest=async()=>{
+ const pat=document.getElementById('apiTokenInput').value.trim();
+ if(!pat.startsWith('pat_')){logLine('pat_ invalid','warn');return;}
+ try{
+  const r=await fetch(`${REST_BASE}/trading/v1/options/accounts`,{headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});
+  const txt=await r.text();const j=JSON.parse(txt);const data=j?.data||[];const sel=document.getElementById('accountSelect');sel.innerHTML='';
+  data.forEach(a=>{const id=a.account_id||a.id;const opt=document.createElement('option');opt.value=id;opt.textContent=`${id} $${a.balance}`;sel.appendChild(opt);});
+  logLine(`TEST OK ${data.length} accounts`,'buy');
+ }catch(e){logLine(e.message,'warn');}
+};
+async function fetchAccounts(pat){const r=await fetch(`${REST_BASE}/trading/v1/options/accounts`,{headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});return JSON.parse(await r.text());}
+async function fetchOtp(pat,acc){const r=await fetch(`${REST_BASE}/trading/v1/options/accounts/${encodeURIComponent(acc)}/otp`,{method:'POST',headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});const j=JSON.parse(await r.text());return j?.data?.url||j?.url;}
+window.doConnect=async()=>{
+ const pat=document.getElementById('apiTokenInput').value.trim();const accId=document.getElementById('accountSelect').value;
+ if(!pat||!accId){logLine('TEST first','warn');return;}
+ currentPat=pat;currentAccountId=accId;
+ const js=await fetchAccounts(pat);const accs=js?.data||js?.data?.accounts||js?.accounts||[];const ch=accs.find(a=>(a.account_id||a.id)===accId)||accs[0];
+ const otp=await fetchOtp(pat,accId);
+ const sock=new WebSocket(otp);wsTrade=sock;
+ sock.onopen=()=>{
+  logLine(`FVG CONNECT ${accId} TP75%`,'fvg');
+  wsSend(sock,{balance:1,subscribe:1});
+  queue=[];SCAN_SYMBOLS.forEach(s=>{queue.push({ticks_history:s.symbol,count:200,granularity:900,style:'candles'});queue.push({ticks_history:s.symbol,count:200,granularity:3600,style:'candles'});});
+  qIdx=0;const t=setInterval(()=>{if(qIdx>=queue.length){clearInterval(t);SCAN_SYMBOLS.forEach((s,i)=>setTimeout(()=>wsSend(sock,{ticks:s.symbol,subscribe:1}),i*400));return;}wsSend(sock,queue[qIdx]);qIdx++;},700);
+ };
+ sock.onmessage=(ev)=>{
+  let d;try{d=JSON.parse(ev.data)}catch(e){return;}
+  if(d.candles && d.echo_req){const sym=d.echo_req.ticks_history;const st=symbolState[sym];if(!st)return;const mapped=d.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close,epoch:c.epoch}));if(d.echo_req.granularity===900)st.candlesM15=mapped;else st.candlesH1=mapped;const f=detectFVG(mapped);if(f){st.fvg=f;st.entry=f.mid;st.sl=f.type==='BULL'?f.low - f.size*0.25:f.high + f.size*0.25;}}
+  if(d.tick){const sym=d.tick.symbol||d.tick.underlying_symbol;feedFvg(sym,+d.tick.quote,d.tick.epoch,900);}
+ };
+};
+window.toggleAuto=()=>{autoFvg=!autoFvg;document.getElementById('autoTradeBtn').innerText=`AUTO FVG: ${autoFvg?'ON':'OFF'}`;document.getElementById('autoTradeBtn').style.borderColor=autoFvg?'#ffcc00':'#5f7d92';document.getElementById('autoTradeBtn').style.color=autoFvg?'#ffcc00':'#5f7d92';logLine(autoFvg?'AUTO FVG ON — will auto-enter on 50% retest':'AUTO FVG OFF','fvg');};
+logLine('v29 FVG 75% ready — CONNECT to scan gaps','fvg');
+</script>
+</body>
+</html>
