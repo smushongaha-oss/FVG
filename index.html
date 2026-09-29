@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SNIPER v32 — REAL TP 75% PRICE</title>
+<title>SNIPER v33 — H1 DIR / M15 BOS / RETEST</title>
 <style>
 :root{--bg:#03070c;--panel:#071018;--line:#123041;--cyan:#33d6ff;--red:#ff4d4d;--green:#3ddc84;--gold:#ffcc00}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#dff6ff;font-family:monospace}
@@ -11,156 +11,156 @@ button,input,select{width:100%;background:#07141f;color:#33d6ff;border:1px solid
 button{font-weight:800;min-height:42px}.log{font-size:9px;line-height:1.6;white-space:pre-wrap;max-height:180px;overflow:auto;background:#040b12;border:1px solid #123041;border-radius:8px;padding:8px}
 .charts-wall{display:grid;grid-template-columns:1fr;gap:8px}@media(min-width:700px){.charts-wall{grid-template-columns:1fr 1fr}}
 .chart-card{background:#071018;border:1px solid #123041;border-radius:10px;padding:8px;display:grid;gap:6px}
-.chart-card.fvg-signal{border-color:#ffcc00;box-shadow:0 0 18px rgba(255,204,0,.35)}
+.chart-card.fvg-signal{border-color:#ffcc00;box-shadow:0 0 18px rgba(255,204,0,.35)}.chart-card.bos-signal{border-color:#33d6ff;box-shadow:0 0 18px rgba(51,214,255,.35)}
 .card-head{display:flex;justify-content:space-between;font-size:11px;font-weight:800}
 .card-badge{padding:3px 8px;border-radius:4px;font-size:9px;border:1px solid #123041}
-.badge-fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.15)}.badge-neutral{color:#5f7d92}
+.badge-fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.15)}.badge-bos{color:#33d6ff;border-color:#33d6ff;background:rgba(51,214,255,.15)}.badge-neutral{color:#5f7d92}
 .spark-box{height:140px;background:#040b12;border:1px solid #123041;border-radius:6px;overflow:hidden}.spark-box svg{width:100%;height:100%;display:block}
-.card-banner{border:1px solid #123041;border-radius:6px;padding:8px;text-align:center;font-size:10px;font-weight:800;min-height:42px;display:grid;place-items:center}
-.card-banner.fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.12)}.card-banner.neutral{color:#5f7d92}
-.levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:9px}
-.level{border:1px solid #123041;border-radius:6px;padding:6px;text-align:center;font-weight:800}
-.btn-buy-sm{background:#082d18;border:1px solid #3ddc84;color:#3ddc84;padding:6px;font-size:9px;min-height:32px}.btn-sell-sm{background:#2d0808;border:1px solid #ff4d4d;color:#ff4d4d;padding:6px;font-size:9px;min-height:32px}
-.btn-fvg{background:#2a2200;border:2px solid #ffcc00;color:#ffcc00;padding:10px;font-size:11px;min-height:40px;grid-column:span 2;width:100%}
+.card-banner{border:1px solid #123041;border-radius:6px;padding:8px;text-align:center;font-size:10px;font-weight:800;min-height:46px;display:grid;place-items:center}
+.card-banner.fvg{color:#ffcc00;border-color:#ffcc00;background:rgba(255,204,0,.12)}.card-banner.bos{color:#33d6ff;border-color:#33d6ff;background:rgba(51,214,255,.12)}.card-banner.neutral{color:#5f7d92}
+.levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:9px}.level{border:1px solid #123041;border-radius:6px;padding:6px;text-align:center;font-weight:800}
+.btn-fvg{background:#2a2200;border:2px solid #ffcc00;color:#ffcc00;padding:10px;font-size:11px;min-height:40px;width:100%}
 </style>
 </head>
 <body>
 <div class="shell">
 <div class="topbar">
-<b style="color:#ffcc00">SNIPER v32 — REAL 75% TP PRICE</b>
-<div style="font-size:10px;color:#5f7d92">Entry = 50% FVG | SL = gap edge | TP price = Entry ± 0.75% move = 75% profit @ x100</div>
+<b style="color:#ffcc00">SNIPER v33 — H1 DIR → M15 BOS → RETEST → TP 75%</b>
+<div style="font-size:10px;color:#8fb4c6">H1 EMA50 = Trend Filter | M15 BOS = Break Confirmation | M15 FVG 50% Retest = Entry | TP = Entry ±0.75% = 75% @ x100</div>
 <div id="liveUsdLine" style="font-size:11px;color:#ffb020">LIVE: not connected</div>
-<input type="text" id="apiTokenInput" placeholder="DERIV pat_... here (starts with pat_)" style="border:2px solid #3ddc84">
+<input type="text" id="apiTokenInput" placeholder="DERIV pat_... here" style="border:2px solid #3ddc84">
 <input type="text" id="tgTokenInput" placeholder="OPTIONAL Telegram Bot Token" style="margin-top:6px">
-<input type="text" id="tgChatInput" placeholder="OPTIONAL Telegram Chat ID -100..." style="margin-top:6px">
+<input type="text" id="tgChatInput" placeholder="OPTIONAL Telegram Chat ID" style="margin-top:6px">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
 <select id="accountSelect"><option>TEST first</option></select>
 <button onclick="doTest()">1) TEST</button>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-<button onclick="doConnect()" style="background:#2a2200;border:2px solid #ffcc00;color:#ffcc00">2) CONNECT v32</button>
-<button id="autoTradeBtn" onclick="toggleAuto()">AUTO FVG: OFF</button>
+<button onclick="doConnect()" style="background:#2a2200;border:2px solid #ffcc00;color:#ffcc00">2) CONNECT v33</button>
+<button id="autoTradeBtn" onclick="toggleAuto()">AUTO: OFF</button>
 </div>
-<div id="acctLine" style="font-size:10px;color:#5f7d92;margin-top:8px;border:1px solid #123041;border-radius:6px;padding:6px">v32: Real TP price = Entry * 0.75% for 75% profit lock</div>
-<div class="log" id="execLog">v32 loaded — shows real TP price
+<div class="log" id="execLog">v33 loaded — H1 DIR / M15 BOS / RETEST
 </div>
 </div>
 <div class="charts-wall" id="chartsWall"></div>
 </div>
 <script>
 const REST_BASE='https://api.derivws.com';const APP_ID='34uEO9DPEeYnaZ71rfMT8';
-const MULT=100;const TP_PCT=75;const MOVE_PCT=TP_PCT/MULT/100; // 0.0075
-const SCAN_SYMBOLS=[{symbol:'R_10',short:'V10'},{symbol:'R_25',short:'V25'},{symbol:'R_50',short:'V50'},{symbol:'R_75',short:'V75'},{symbol:'R_100',short:'V100'},{symbol:'1HZ10V',short:'V10(1s)'},{symbol:'1HZ15V',short:'V15(1s)'},{symbol:'1HZ25V',short:'V25(1s)'},{symbol:'1HZ50V',short:'V50(1s)'}];
-let symbolState={};SCAN_SYMBOLS.forEach(s=>symbolState[s.symbol]={short:s.short,candlesM15:[],fvg:null,lastPrice:null,tpPrice:null,slPrice:null});
+const MULT=100,TP_PCT=75,MOVE_PCT=TP_PCT/MULT/100;
+const SCAN_SYMBOLS=[{symbol:'R_10',short:'V10'},{symbol:'R_25',short:'V25'},{symbol:'R_50',short:'V50'},{symbol:'R_75',short:'V75'},{symbol:'R_100',short:'V100'},{symbol:'1HZ10V',short:'V10(1s)'},{symbol:'1HZ25V',short:'V25(1s)'}];
+let symbolState={};SCAN_SYMBOLS.forEach(s=>symbolState[s.symbol]={short:s.short,candlesH1:[],candlesM15:[],fvg:null,dir:null,bos:null,lastPrice:null,tpPrice:null,slPrice:null});
 let wsTrade=null,reqIdCounter=1,queue=[],qIdx=0,autoFvg=false;
-
 function ts(){return new Date().toLocaleTimeString('en-GB',{hour12:false})}
-function logLine(t,c='info'){const el=document.getElementById('execLog');const col=c==='warn'?'#ffb020':c==='fvg'?'#ffcc00':c==='buy'?'#3ddc84':'#8fb4c6';el.innerHTML=`<div style="color:${col}">${ts()} ${t}</div>`+el.innerHTML;}
+function logLine(t,c='info'){const el=document.getElementById('execLog');const col=c==='warn'?'#ffb020':c==='fvg'?'#ffcc00':c==='bos'?'#33d6ff':c==='buy'?'#3ddc84':'#8fb4c6';el.innerHTML=`<div style="color:${col}">${ts()} ${t}</div>`+el.innerHTML;}
 function wsSend(s,o){if(s&&s.readyState===1){try{s.send(JSON.stringify(o));return true}catch(e){return false}}return false}
-async function sendTg(text){const tok=document.getElementById('tgTokenInput').value.trim();const chat=document.getElementById('tgChatInput').value.trim();if(!tok||!chat) return;try{await fetch(`https://api.telegram.org/bot${tok}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text:text})});}catch(e){}}
+async function sendTg(txt){const tok=document.getElementById('tgTokenInput').value.trim();const chat=document.getElementById('tgChatInput').value.trim();if(!tok||!chat) return;try{await fetch(`https://api.telegram.org/bot${tok}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text:txt})});}catch(e){}}
 
-function detectFVG(candles){
- if(candles.length<10) return null;
- for(let i=candles.length-3;i>Math.max(0,candles.length-80);i--){
-  const c1=candles[i-2], c3=candles[i]; if(!c1||!c3) continue;
-  if(c1.high < c3.low){ return {type:'BULL',high:c3.low,low:c1.high,mid:(c3.low+c1.high)/2,size:c3.low-c1.high,age:candles.length-1-i};}
-  if(c1.low > c3.high){ return {type:'BEAR',high:c1.low,low:c3.high,mid:(c1.low+c3.high)/2,size:c1.low-c3.high,age:candles.length-1-i};}
- } return null;
+function ema(arr,period){let k=2/(period+1);let ema=arr[0];for(let i=1;i<arr.length;i++) ema=arr[i]*k+ema*(1-k);return ema;}
+function detectFVG(candles){if(candles.length<10) return null;for(let i=candles.length-3;i>Math.max(0,candles.length-80);i--){const c1=candles[i-2],c3=candles[i];if(!c1||!c3) continue;if(c1.high<c3.low) return {type:'BULL',high:c3.low,low:c1.high,mid:(c3.low+c1.high)/2,size:c3.low-c1.high,epoch:candles[i].epoch};if(c1.low>c3.high) return {type:'BEAR',high:c1.low,low:c3.high,mid:(c1.low+c3.high)/2,size:c1.low-c3.high,epoch:candles[i].epoch};}return null;}
+function detectBOS(candlesM15){
+ if(candlesM15.length<30) return null;
+ const look=20; const recent=candlesM15.slice(-look);
+ const swingHigh=Math.max(...candlesM15.slice(-50,-20).map(c=>c.high));
+ const swingLow=Math.min(...candlesM15.slice(-50,-20).map(c=>c.low));
+ const lastClose=recent[recent.length-1].close;
+ if(lastClose>swingHigh) return {type:'BULL',level:swingHigh,breakPrice:lastClose};
+ if(lastClose<swingLow) return {type:'BEAR',level:swingLow,breakPrice:lastClose};
+ return null;
 }
-function calcLevels(fvg){
- const entry=fvg.mid;
- const slPrice = fvg.type==='BULL'? fvg.low - fvg.size*0.2 : fvg.high + fvg.size*0.2;
- const tpPrice = fvg.type==='BULL'? entry*(1+MOVE_PCT) : entry*(1-MOVE_PCT);
- return {entry, slPrice, tpPrice};
-}
-function buildWall(){const wall=document.getElementById('chartsWall');wall.innerHTML=SCAN_SYMBOLS.map(s=>`<div class="chart-card" id="card-${s.symbol}"><div class="card-head"><span>${s.short}</span><span class="card-badge badge-neutral" id="badge-${s.symbol}">queued</span></div><div class="spark-box"><svg id="spark-${s.symbol}" viewBox="0 0 200 140" preserveAspectRatio="none"></svg></div><div class="card-banner neutral" id="banner-${s.symbol}">queued</div><div class="levels"><div class="level" id="entry-${s.symbol}" style="border-color:#ffcc00;color:#ffcc00">Entry —</div><div class="level" id="sl-${s.symbol}" style="border-color:#ff4d4d;color:#ff4d4d">SL —</div><div class="level" id="tp-${s.symbol}" style="border-color:#3ddc84;color:#3ddc84">TP 75% —</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button class="btn-sell-sm" onclick="manualFvg('${s.symbol}','SELL')">SELL</button><button class="btn-buy-sm" onclick="manualFvg('${s.symbol}','BUY')">BUY</button></div><button class="btn-fvg" id="btn-main-${s.symbol}" onclick="manualFvg('${s.symbol}','AUTO')">⚡ TRADE FVG 75% TP</button></div>`).join('');}
+
+function buildWall(){const wall=document.getElementById('chartsWall');wall.innerHTML=SCAN_SYMBOLS.map(s=>`<div class="chart-card" id="card-${s.symbol}"><div class="card-head"><span>${s.short}</span><span class="card-badge badge-neutral" id="badge-${s.symbol}">queued</span></div><div class="spark-box"><svg id="spark-${s.symbol}" viewBox="0 0 200 140" preserveAspectRatio="none"></svg></div><div class="card-banner neutral" id="banner-${s.symbol}">H1 DIR → M15 BOS → RETEST</div><div class="levels"><div class="level" id="dir-${s.symbol}" style="color:#8fb4c6">H1 —</div><div class="level" id="bos-${s.symbol}" style="color:#33d6ff">BOS —</div><div class="level" id="entry-${s.symbol}" style="color:#ffcc00">Entry —</div></div><div class="levels"><div class="level" id="sl-${s.symbol}" style="color:#ff4d4d">SL —</div><div class="level" id="tp-${s.symbol}" style="color:#3ddc84">TP 75% —</div><div class="level" id="rr-${s.symbol}" style="color:#8fb4c6">RR —</div></div><button class="btn-fvg" id="btn-${s.symbol}" onclick="manualTrade('${s.symbol}')">WAIT H1/M15</button></div>`).join('');}
 buildWall();
 
 function updateCard(sym){
- const st=symbolState[sym];if(!st) return;
- const svg=document.getElementById(`spark-${sym}`);const badge=document.getElementById(`badge-${sym}`);const banner=document.getElementById(`banner-${sym}`);const card=document.getElementById(`card-${sym}`);
- if(!svg||!badge||!banner||!card) return;
- const src=st.candlesM15;
- if(src.length<2){ badge.textContent=`Loading ${src.length}/200`; banner.textContent=`Loading...`; svg.innerHTML=`<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="10" fill="#5f7d92">Loading ${src.length}...</text>`; return;}
- const last=src.slice(-80);
- let min=Math.min(...last.map(c=>c.low)), max=Math.max(...last.map(c=>c.high));
- if(st.slPrice) min=Math.min(min,st.slPrice); if(st.tpPrice) max=Math.max(max,st.tpPrice); if(min===max){min-=0.5;max+=0.5;}
+ const st=symbolState[sym];const svg=document.getElementById(`spark-${sym}`);const badge=document.getElementById(`badge-${sym}`);const banner=document.getElementById(`banner-${sym}`);const card=document.getElementById(`card-${sym}`);
+ if(!svg||!badge) return;
+ if(st.candlesH1.length<10||st.candlesM15.length<10){svg.innerHTML=`<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="9" fill="#5f7d92">Loading H1 ${st.candlesH1.length}/200 M15 ${st.candlesM15.length}/200</text>`;return;}
+ const h1Closes=st.candlesH1.map(c=>c.close); const ema50=ema(h1Closes,50); const lastH1Close=h1Closes[h1Closes.length-1];
+ const h1Dir=lastH1Close>ema50?'BULL':'BEAR'; st.dir=h1Dir;
+ const bos=detectBOS(st.candlesM15); st.bos=bos;
+ const fvg=detectFVG(st.candlesM15);
+ let validFvg=null;
+ if(fvg && fvg.type===h1Dir){ // FVG must align with H1 DIR
+   if(bos && bos.type===h1Dir){ validFvg=fvg; } // BOS must also align
+ }
+ if(validFvg){const tp=validFvg.type==='BULL'?validFvg.mid*(1+MOVE_PCT):validFvg.mid*(1-MOVE_PCT);const sl=validFvg.type==='BULL'?validFvg.low*0.9995:validFvg.high*1.0005;st.fvg=validFvg;st.tpPrice=tp;st.slPrice=sl;}
+ else {st.fvg=null;}
+
+ const last=st.candlesM15.slice(-80); let min=Math.min(...last.map(c=>c.low)), max=Math.max(...last.map(c=>c.high));
+ if(st.fvg){min=Math.min(min,st.slPrice); max=Math.max(max,st.tpPrice);}
  const span=max-min||1; const toY=p=>140-((p-min)/span*110+10); const toX=i=>(i/(last.length-1))*200;
- let html=`<polyline fill="none" stroke="#33d6ff" stroke-width="1.5" points="${last.map((c,i)=>`${toX(i).toFixed(1)},${toY(c.close).toFixed(1)}`).join(' ')}"/>`;
- if(st.fvg && st.tpPrice){
-  const yHigh=toY(st.fvg.high), yLow=toY(st.fvg.low), yEntry=toY(st.fvg.mid), yTP=toY(st.tpPrice), ySL=toY(st.slPrice);
-  html+=`<rect x="0" y="${Math.min(yHigh,yLow)}" width="200" height="${Math.abs(yHigh-yLow)}" fill="${st.fvg.type==='BULL'?'rgba(61,220,132,.22)':'rgba(255,77,77,.22)'}" stroke="#ffcc00" stroke-width="1" stroke-dasharray="4 3"/>`;
-  html+=`<line x1="0" y1="${yEntry}" x2="200" y2="${yEntry}" stroke="#ffcc00" stroke-width="1.2" stroke-dasharray="5 3"/><text x="2" y="${yEntry-2}" font-size="7" fill="#ffcc00">ENTRY ${st.fvg.mid.toFixed(2)}</text>`;
-  html+=`<line x1="0" y1="${yTP}" x2="200" y2="${yTP}" stroke="#3ddc84" stroke-width="1" stroke-dasharray="3 3"/><text x="120" y="${yTP-2}" font-size="7" fill="#3ddc84">TP75 ${st.tpPrice.toFixed(2)}</text>`;
-  html+=`<line x1="0" y1="${ySL}" x2="200" y2="${ySL}" stroke="#ff4d4d" stroke-width="1" stroke-dasharray="3 3"/><text x="120" y="${ySL+8}" font-size="7" fill="#ff4d4d">SL ${st.slPrice.toFixed(2)}</text>`;
-  badge.textContent=`FVG ${st.fvg.type} ${st.fvg.mid.toFixed(2)}`; badge.className='card-badge badge-fvg';
-  banner.textContent=`FVG ${st.fvg.type} Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP75% ${st.tpPrice.toFixed(2)}`; banner.className='card-banner fvg';
-  card.className='chart-card fvg-signal';
-  document.getElementById(`entry-${sym}`).textContent=`Entry ${st.fvg.mid.toFixed(2)}`;
-  document.getElementById(`sl-${sym}`).textContent=`SL ${st.slPrice.toFixed(2)}`;
-  document.getElementById(`tp-${sym}`).textContent=`TP75% ${st.tpPrice.toFixed(2)}`;
-  document.getElementById(`btn-main-${sym}`).textContent=`⚡ TRADE ${st.fvg.type} → TP ${st.tpPrice.toFixed(2)} (75%)`;
+ let html=`<polyline fill="none" stroke="#33d6ff" stroke-width="1.2" points="${last.map((c,i)=>`${toX(i).toFixed(1)},${toY(c.close).toFixed(1)}`).join(' ')}"/>`;
+ if(st.bos){html+=`<line x1="0" y1="${toY(st.bos.level)}" x2="200" y2="${toY(st.bos.level)}" stroke="#33d6ff" stroke-width="1" stroke-dasharray="6 3"/><text x="2" y="${toY(st.bos.level)-2}" font-size="7" fill="#33d6ff">BOS ${st.bos.level.toFixed(2)}</text>`;}
+ if(st.fvg){html+=`<rect x="0" y="${toY(st.fvg.high)}" width="200" height="${toY(st.fvg.low)-toY(st.fvg.high)}" fill="${st.fvg.type==='BULL'?'rgba(61,220,132,.18)':'rgba(255,77,77,.18)'}" stroke="#ffcc00" stroke-width="1"/><line x1="0" y1="${toY(st.fvg.mid)}" x2="200" y2="${toY(st.fvg.mid)}" stroke="#ffcc00" stroke-width="1.2" stroke-dasharray="5 3"/><line x1="0" y1="${toY(st.tpPrice)}" x2="200" y2="${toY(st.tpPrice)}" stroke="#3ddc84" stroke-width="1"/><line x1="0" y1="${toY(st.slPrice)}" x2="200" y2="${toY(st.slPrice)}" stroke="#ff4d4d" stroke-width="1"/>`;}
+
+ if(st.fvg && st.bos){
+   badge.textContent=`H1 ${h1Dir} | BOS ${st.bos.type} | RETEST ${st.fvg.mid.toFixed(2)}`; badge.className='card-badge badge-fvg';
+   banner.textContent=`H1 ${h1Dir} EMA50 ${ema50.toFixed(2)} | BOS ${st.bos.level.toFixed(2)} | Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP ${st.tpPrice.toFixed(2)} (75%)`; banner.className='card-banner fvg';
+   card.className='chart-card fvg-signal';
+   document.getElementById(`dir-${sym}`).textContent=`H1 ${h1Dir} ${ema50.toFixed(1)}`;
+   document.getElementById(`bos-${sym}`).textContent=`BOS ${st.bos.level.toFixed(2)}`;
+   document.getElementById(`entry-${sym}`).textContent=`Entry ${st.fvg.mid.toFixed(2)}`;
+   document.getElementById(`sl-${sym}`).textContent=`SL ${st.slPrice.toFixed(2)}`;
+   document.getElementById(`tp-${sym}`).textContent=`TP75 ${st.tpPrice.toFixed(2)}`;
+   document.getElementById(`rr-${sym}`).textContent=`${(((st.tpPrice-st.fvg.mid)/Math.abs(st.fvg.mid-st.slPrice))* (st.fvg.type==='BULL'?1:-1)).toFixed(1)}R`;
+   document.getElementById(`btn-${sym}`).textContent=`⚡ TRADE RETEST → TP ${st.tpPrice.toFixed(2)}`;
  } else {
-  badge.textContent=`NO FVG ${src.length}`; badge.className='card-badge badge-neutral';
-  banner.textContent=`No FVG — ${src.length} candles`; banner.className='card-banner neutral';
-  card.className='chart-card';
+   badge.textContent=`H1 ${h1Dir} | ${bos?`BOS ${bos.type}`:'NO BOS'}`; badge.className=bos?'card-badge badge-bos':'card-badge badge-neutral';
+   banner.textContent=`H1 ${h1Dir} | ${bos?`BOS at ${bos.level.toFixed(2)} — wait retest`:'Wait BOS on M15'}`; banner.className=bos?'card-banner bos':'card-banner neutral';
+   card.className=bos?'chart-card bos-signal':'chart-card';
+   document.getElementById(`dir-${sym}`).textContent=`H1 ${h1Dir}`;
+   document.getElementById(`bos-${sym}`).textContent=bos?`BOS ${bos.level.toFixed(2)}`:'BOS —';
+   document.getElementById(`btn-${sym}`).textContent=bos?`WAIT RETEST ${bos.level.toFixed(2)}`:`WAIT H1 ${h1Dir}`;
  }
  svg.innerHTML=html;
 }
-setInterval(()=>SCAN_SYMBOLS.forEach(s=>updateCard(s.symbol)),700);
+setInterval(()=>SCAN_SYMBOLS.forEach(s=>updateCard(s.symbol)),800);
 
-async function doTest(){
- const pat=document.getElementById('apiTokenInput').value.trim();
- if(!pat.startsWith('pat_')){logLine('Paste pat_...','warn');return;}
- try{
-  const r=await fetch(`${REST_BASE}/trading/v1/options/accounts`,{headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});
-  const txt=await r.text();const j=JSON.parse(txt);const data=j?.data||[];const sel=document.getElementById('accountSelect');sel.innerHTML='';
-  data.forEach(a=>{const id=a.account_id||a.id;const opt=document.createElement('option');opt.value=id;opt.textContent=`${id} $${a.balance}`;sel.appendChild(opt);});
-  logLine(`TEST OK ${data.length} accounts`,'buy');
- }catch(e){logLine(e.message,'warn');}
-}
+async function doTest(){const pat=document.getElementById('apiTokenInput').value.trim();if(!pat.startsWith('pat_')){logLine('pat_ invalid','warn');return;}try{const r=await fetch(`${REST_BASE}/trading/v1/options/accounts`,{headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});const j=JSON.parse(await r.text());const data=j?.data||[];const sel=document.getElementById('accountSelect');sel.innerHTML='';data.forEach(a=>{const id=a.account_id||a.id;const opt=document.createElement('option');opt.value=id;opt.textContent=`${id} $${a.balance}`;sel.appendChild(opt);});logLine(`TEST OK ${data.length}`,'buy');}catch(e){logLine(e.message,'warn');}}
 async function fetchAccounts(pat){const r=await fetch(`${REST_BASE}/trading/v1/options/accounts`,{headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});return JSON.parse(await r.text());}
 async function fetchOtp(pat,acc){const r=await fetch(`${REST_BASE}/trading/v1/options/accounts/${encodeURIComponent(acc)}/otp`,{method:'POST',headers:{'Authorization':`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});const j=JSON.parse(await r.text());return j?.data?.url||j?.url;}
 
 async function doConnect(){
- const pat=document.getElementById('apiTokenInput').value.trim();const accId=document.getElementById('accountSelect').value;
- if(!pat||!accId){logLine('TEST first','warn');return;}
- const js=await fetchAccounts(pat);const accs=js?.data||[];const ch=accs.find(a=>(a.account_id||a.id)===accId)||accs[0];
- const otp=await fetchOtp(pat,accId);
- const sock=new WebSocket(otp);wsTrade=sock;
+ const pat=document.getElementById('apiTokenInput').value.trim();const accId=document.getElementById('accountSelect').value;if(!pat||!accId){logLine('TEST first','warn');return;}
+ const js=await fetchAccounts(pat);const otp=await fetchOtp(pat,accId);const sock=new WebSocket(otp);wsTrade=sock;
  sock.onopen=()=>{
-  logLine(`CONNECT v32 ${accId} — 200 M15 + real TP price`,'fvg');
-  queue=[];SCAN_SYMBOLS.forEach(s=>queue.push({ticks_history:s.symbol,adjust_start_time:1,count:200,end:"latest",granularity:900,style:"candles"}));
-  qIdx=0;
-  const t=setInterval(()=>{
-   if(qIdx>=queue.length){clearInterval(t);logLine(`✅ All 200 loaded — real TP prices shown`,'buy');SCAN_SYMBOLS.forEach((s,i)=>setTimeout(()=>wsSend(sock,{ticks:s.symbol,subscribe:1}),i*400));return;}
-   wsSend(sock,queue[qIdx]); qIdx++;
-  },600);
+  logLine(`CONNECT v33 H1 200 + M15 200 — DIR→BOS→RETEST`,'fvg');
+  queue=[];SCAN_SYMBOLS.forEach(s=>{
+   queue.push({ticks_history:s.symbol,adjust_start_time:1,count:200,end:"latest",granularity:3600,style:"candles"}); // H1
+   queue.push({ticks_history:s.symbol,adjust_start_time:1,count:200,end:"latest",granularity:900,style:"candles"}); // M15
+  });
+  qIdx=0;const t=setInterval(()=>{if(qIdx>=queue.length){clearInterval(t);logLine(`✅ H1 + M15 loaded — BOS detection active`,'buy');SCAN_SYMBOLS.forEach((s,i)=>setTimeout(()=>wsSend(sock,{ticks:s.symbol,subscribe:1}),i*400));return;}wsSend(sock,queue[qIdx]);qIdx++;},500);
  };
  sock.onmessage=(ev)=>{
   let d;try{d=JSON.parse(ev.data)}catch(e){return;}
   if(d.msg_type==='candles'&&d.candles){
    const sym=d.echo_req.ticks_history;const st=symbolState[sym];if(!st) return;
-   const mapped=d.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close,epoch:c.epoch}));
-   st.candlesM15=mapped;
-   const f=detectFVG(mapped);
-   if(f){const lv=calcLevels(f); st.fvg=f; st.tpPrice=lv.tpPrice; st.slPrice=lv.slPrice; logLine(`⚡ FVG FOUND ${sym} ${f.type} Entry ${lv.entry.toFixed(2)} SL ${lv.slPrice.toFixed(2)} TP75% ${lv.tpPrice.toFixed(2)}`,'fvg'); sendTg(`⚡ FVG ${f.type} ${st.short} Entry ${lv.entry.toFixed(2)} SL ${lv.slPrice.toFixed(2)} TP75% ${lv.tpPrice.toFixed(2)} = 75% profit lock`);}
+   const mapped=d.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close,epoch:c.epoch,close_time:c.epoch}));
+   if(d.echo_req.granularity===3600){st.candlesH1=mapped; logLine(`H1 ${sym} ${mapped.length}`,'info');}
+   if(d.echo_req.granularity===900){st.candlesM15=mapped; logLine(`M15 ${sym} ${mapped.length}`,'info');}
+   if(st.candlesH1.length>30 && st.candlesM15.length>30){
+    const h1Closes=st.candlesH1.map(c=>c.close);const ema50=ema(h1Closes,50);const dir=h1Closes[h1Closes.length-1]>ema50?'BULL':'BEAR';
+    const bos=detectBOS(st.candlesM15); const fvg=detectFVG(st.candlesM15);
+    if(bos && fvg && bos.type===dir && fvg.type===dir){
+     const tp=fvg.type==='BULL'?fvg.mid*(1+MOVE_PCT):fvg.mid*(1-MOVE_PCT);const sl=fvg.type==='BULL'?fvg.low:fvg.high;
+     if(!st.fvg || Math.abs(st.fvg.mid-fvg.mid)>0.01){
+      logLine(`⚡ BOS+RETEST ${sym} H1 ${dir} BOS ${bos.level.toFixed(2)} FVG ${fvg.mid.toFixed(2)} SL ${sl.toFixed(2)} TP75 ${tp.toFixed(2)}`,'fvg');
+      sendTg(`⚡ BOS+RETEST ${st.short} H1 ${dir} EMA50 ${ema50.toFixed(2)} BOS ${bos.level.toFixed(2)} Entry ${fvg.mid.toFixed(2)} SL ${sl.toFixed(2)} TP75% ${tp.toFixed(2)}`);
+     }
+    }
+   }
   }
-  if(d.msg_type==='tick'&&d.tick){
-   const sym=d.tick.symbol; if(!sym) return; const st=symbolState[sym]; if(!st) return; st.lastPrice=+d.tick.quote;
-  }
+  if(d.msg_type==='tick'&&d.tick){const sym=d.tick.symbol;if(!sym) return;const st=symbolState[sym];if(!st) return;st.lastPrice=+d.tick.quote;}
  };
- sock.onclose=()=>{logLine('Socket closed — reconnect 4s','warn'); setTimeout(()=>doConnect(),4000);}
 }
-function manualFvg(sym,dir){
- const st=symbolState[sym];if(!st||!st.fvg||!st.tpPrice){logLine(`No FVG for ${sym}`,'warn');return;}
- const finalDir=dir==='AUTO'? (st.fvg.type==='BULL'?'BUY':'SELL'):dir;
- const slPct=Math.max(0.8,Math.min(4, Math.abs(st.fvg.mid-st.slPrice)/st.fvg.mid*100*MULT));
- wsSend(wsTrade,{proposal:1,amount:1,basis:'stake',contract_type:finalDir==='BUY'?'MULTUP':'MULTDOWN',underlying_symbol:sym,currency:'USD',multiplier:MULT,limit_order:{stop_loss:slPct,take_profit:TP_PCT},req_id:reqIdCounter++});
- logLine(`FVG TRADE ${sym} ${finalDir} Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP ${st.tpPrice.toFixed(2)} = 75% profit LOCKED`,'fvg');
- sendTg(`🚀 TRADE ${sym} ${finalDir} Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP ${st.tpPrice.toFixed(2)} (75%)`);
+function manualTrade(sym){
+ const st=symbolState[sym];if(!st||!st.fvg||!st.tpPrice){logLine(`No BOS+Retest for ${sym} — wait H1 DIR + M15 BOS`,'warn');return;}
+ const dir=st.fvg.type==='BULL'?'BUY':'SELL';const slPct=Math.max(0.8,Math.min(4, Math.abs(st.fvg.mid-st.slPrice)/st.fvg.mid*100*MULT));
+ wsSend(wsTrade,{proposal:1,amount:1,basis:'stake',contract_type:dir==='BUY'?'MULTUP':'MULTDOWN',underlying_symbol:sym,currency:'USD',multiplier:MULT,limit_order:{stop_loss:slPct,take_profit:TP_PCT},req_id:reqIdCounter++});
+ logLine(`TRADE ${sym} ${dir} H1 ${st.dir} BOS ${st.bos.level.toFixed(2)} Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP ${st.tpPrice.toFixed(2)} = 75%`,'fvg');
+ sendTg(`🚀 TRADE ${sym} ${dir} H1 ${st.dir} BOS ${st.bos.level.toFixed(2)} Entry ${st.fvg.mid.toFixed(2)} SL ${st.slPrice.toFixed(2)} TP ${st.tpPrice.toFixed(2)} (75%)`);
 }
-function toggleAuto(){autoFvg=!autoFvg;document.getElementById('autoTradeBtn').innerText=`AUTO FVG: ${autoFvg?'ON':'OFF'}`; logLine(autoFvg?'AUTO ON — trades on FVG 50% touch → TP 75% price':'AUTO OFF','fvg');}
+function toggleAuto(){autoFvg=!autoFvg;document.getElementById('autoTradeBtn').innerText=`AUTO: ${autoFvg?'ON':'OFF'}`;logLine(autoFvg?'AUTO ON — H1 DIR + M15 BOS + RETEST → TP75':'AUTO OFF','bos');}
 </script>
 </body>
 </html>
