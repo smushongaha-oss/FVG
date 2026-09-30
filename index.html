@@ -1,88 +1,160 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Crash 300 LIVE v55 Fixed</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CRASH 300 LIVE — DERIV WEBSOCKET FIXED</title>
 <style>
-body{margin:0;background:#0a0a0a;font-family:Arial,sans-serif;color:#fff}
-.header{background:#000;padding:12px;text-align:center;font-weight:900;border-bottom:2px solid #d40000}
-.live-bar{background:#141414;padding:8px 12px;display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid #222}
-.dot{width:8px;height:8px;border-radius:50%;background:red;display:inline-block}.dot.on{background:#00ff88;box-shadow:0 0 6px #00ff88}
-.chart-wrap{background:#000;padding:8px;height:220px;border-bottom:1px solid #222}.chart-wrap svg{width:100%;height:100%}
-.controls{background:#111;padding:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-input{background:#1a1a1a;color:#33d6ff;border:1px solid #333;border-radius:6px;padding:10px}
-button{background:#d40000;color:#fff;border:none;border-radius:8px;padding:12px;font-weight:800}
+/* your original styles kept */
+:root{--bg:#03070c;--panel:#071018;--panel-2:#0a1620;--line:#123041;--cyan:#33d6ff;--cyan-dim:#1a7a99;--red:#ff4d4d;--amber:#ffb020;--green:#3ddc84;--text:#dff6ff;--muted:#5f7d92}
+*{box-sizing:border-box}html,body{margin:0;height:100%}body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;overflow:auto}
+.shell{min-height:100%;padding:10px;display:grid;grid-template-rows:auto 1fr auto;gap:10px}
+.topbar,.panel{background:linear-gradient(180deg,rgba(12,28,40,.92),rgba(7,16,24,.96));border:1px solid var(--line);border-radius:10px}
+.topbar{display:grid;grid-template-columns:1.4fr 1fr 1.2fr;gap:12px;padding:12px 14px;align-items:center}
+.brand h1{margin:0;font-size:13px;letter-spacing:2px;color:var(--cyan)}
+.pnl-hero{text-align:center}.pnl-hero.k{font-size:10px;color:var(--muted)}.pnl-hero.v{font-size:34px;font-weight:700;color:var(--green)}
+.conn{display:flex;justify-content:flex-end;gap:8px;font-size:11px;color:var(--muted)}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--red)}.status-dot.live{background:var(--green)}
+.grid{display:grid;grid-template-columns:270px 1fr 280px;gap:10px}
+.panel{padding:12px;overflow:auto}.sec{font-size:10px;color:var(--cyan-dim);margin:0 0 8px}
+.row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:4px 0}.row.val{color:var(--text)}
+label{font-size:10px;color:var(--muted)}select,input,button{background:#07141f;color:var(--cyan);border:1px solid var(--cyan-dim);border-radius:6px;padding:7px 8px;font-family:inherit;font-size:12px;width:100%}button{cursor:pointer}
+.spark-wrap{height:180px;border:1px solid var(--line);border-radius:8px;background:#040b12;margin:6px 0 10px}#priceSpark{width:100%;height:100%;display:block}
+.sniper-banner{border-radius:8px;padding:12px;text-align:center;font-weight:700;border:1px solid var(--muted);color:var(--muted)}.sniper-banner.buy{border-color:var(--green);color:var(--green)}.sniper-banner.sell{border-color:var(--red);color:var(--red)}.sniper-sub{font-size:10px;color:var(--muted);margin-top:6px}
+.log{font-size:10px;line-height:1.55;color:#8fb4c6;white-space:pre-wrap}
+.scan-header,.scan-row{display:grid;grid-template-columns:1fr 30px 30px 68px;gap:4px;font-size:9.5px;padding:4px 2px;border-bottom:1px solid #0e2430}
+.scan-row{cursor:pointer}.scan-row.focused{background:rgba(51,214,255,.1)}.scan-list{max-height:230px;overflow:auto}
 .signal{background:#fff;color:#000;border-bottom:1px solid #e5e5e5;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
-.left{display:grid;gap:2px}.top{font-size:15px;font-weight:900}.top .sell{color:#d40000}.mid{font-size:13px;color:#7a7a7a;font-weight:600}.profit{font-size:20px;font-weight:900;color:#2a7bff}
-.log{font-size:10px;color:#888;padding:6px;background:#000;max-height:90px;overflow:auto}
-</style></head><body>
-<div class="header">CRASH 300 LIVE — FIXED WS</div>
-<div class="live-bar"><span><span class="dot" id="dot"></span> <span id="status">IDLE</span></span><span id="price">—</span><span id="count">0 signals</span></div>
-<div class="chart-wrap"><svg id="chart" viewBox="0 0 300 180"></svg></div>
-<div class="controls"><input id="stake" value="2.60"><button onclick="connect()" id="connBtn">CONNECT</button><button onclick="toggleAuto()" id="autoBtn">AUTO: ON</button></div>
-<div class="log" id="log"></div>
-<div id="list"></div>
+.signal.top{font-weight:900}.sell{color:#d40000}.profit{font-weight:900;color:#2a7bff;font-size:18px}
+@media(max-width:1100px){.topbar{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+<div class="brand"><h1 id="mainTitle">CRASH 300 LIVE — CONNECTING…</h1><div class="sub" id="subLine">Live Deriv WS</div></div>
+<div class="pnl-hero"><div class="k">LIVE PRICE // CRASH300</div><div class="v" id="sessionPnl">—</div><div class="m" id="sessionMeta">0 signals</div></div>
+<div class="conn"><span class="status-dot" id="statusDot"></span><span id="statusText">connecting</span></div>
+</header>
+<div class="grid">
+<aside class="panel">
+<div class="sec">SCANNER // CRASH/BOOM/VOL</div>
+<div class="scan-header"><span>SYM</span><span>H1</span><span>M1</span><span>STATUS</span></div>
+<div class="scan-list" id="scanBody"></div>
+<div class="sec" style="margin-top:10px">LIVE SIGNALS — LIKE SCREENSHOT</div>
+<div id="sigList"></div>
+</aside>
+<section class="panel">
+<div class="sec">CUMULATIVE PATH // M1 CLOSE — FOCUS</div>
+<div class="spark-wrap"><svg id="priceSpark" viewBox="0 0 680 180" preserveAspectRatio="none"></svg></div>
+<div class="sniper-banner" id="sniperBanner">SCANNING — NO FVG YET<div class="sniper-sub" id="bannerSub">Waiting for real Deriv candles</div></div>
+<div class="sec" style="margin-top:10px">EXECUTION LOG</div>
+<div class="log" id="execLog">waiting…</div>
+</section>
+<aside class="panel">
+<div class="sec">CONTROLS</div>
+<input id="stakeInput" value="2.60"><button id="autoBtn" style="margin-top:8px;background:#d40000;color:#fff">AUTO SIGNAL: ON</button>
+<button onclick="location.reload()" style="margin-top:8px">RECONNECT</button>
+</aside>
+</div>
+</div>
 <script>
-const APP_ID='34uEO9DPEeYnaZ71rfMT8';
-let ws=null,ticks=[],candles=[],auto=true,sigCount=0,lastPrice=0,fvg=null,pingTimer=null;
-const $=id=>document.getElementById(id);
-function log(t){$('log').innerHTML=`${new Date().toLocaleTimeString()} ${t}<br>`+$('log').innerHTML;}
-function setStatus(t,on){$('status').textContent=t;$('dot').className=on?'dot on':'dot';}
-function detectFVG(cs){
- for(let i=cs.length-3;i>cs.length-25&&i>0;i--){
+// FIXED ENDPOINTS - legacy works on github.io
+const APP_ID=1089;
+const WS_ENDPOINTS=[
+  {name:'ws.derivws.com',short:'derivws',url:`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`,legacy:true},
+  {name:'ws.binaryws.com',short:'binary',url:`wss://ws.binaryws.com/websockets/v3?app_id=${APP_ID}`,legacy:true}
+];
+const GRAN_H1=3600,GRAN_M1=60;
+const SCAN_SYMBOLS=[
+  {symbol:'CRASH300',display_name:'Crash 300 Index'},
+  {symbol:'CRASH500',display_name:'Crash 500 Index'},
+  {symbol:'CRASH1000',display_name:'Crash 1000 Index'},
+  {symbol:'BOOM300',display_name:'Boom 300 Index'},
+  {symbol:'BOOM500',display_name:'Boom 500 Index'},
+  {symbol:'BOOM1000',display_name:'Boom 1000 Index'},
+  {symbol:'R_10',display_name:'Volatility 10 Index'},
+  {symbol:'R_25',display_name:'Volatility 25 Index'},
+  {symbol:'R_50',display_name:'Volatility 50 Index'},
+  {symbol:'R_75',display_name:'Volatility 75 Index'},
+  {symbol:'R_100',display_name:'Volatility 100 Index'}
+];
+let symbolState={};SCAN_SYMBOLS.forEach(s=>symbolState[s.symbol]={name:s.display_name,h1Candles:[],m1Candles:[],h1Value:50,m1Value:50,h1Zone:'NEUTRAL',m1Zone:'NEUTRAL',lastPrice:null,fvg:null});
+let ws,currentEp=WS_ENDPOINTS[0],endpointIdx=0,failCount=0,pingTimer=null,lastMsgAt=Date.now(),subscribedTicksSet=new Set(),focusSymbol='CRASH300';
+const statusDot=document.getElementById('statusDot'),statusText=document.getElementById('statusText');
+function logLine(t,cls='info'){const el=document.getElementById('execLog');el.innerHTML=`<div class="${cls}">${new Date().toLocaleTimeString()} ${t}</div>`+el.innerHTML;}
+function setConn(live,label){statusDot.classList.toggle('live',live);statusText.textContent=label;}
+function wsSend(o){if(ws&&ws.readyState===1){ws.send(JSON.stringify(o));return true;}return false;}
+function computeFVG(cs){
+ for(let i=cs.length-3;i>cs.length-30&&i>0;i--){
   const c1=cs[i-2],c3=cs[i];if(!c1||!c3)continue;
-  if(c1.high<c3.low) return {type:'BULL',mid:(c3.low+c1.high)/2,low:c1.high,high:c3.low};
-  if(c1.low>c3.high) return {type:'BEAR',mid:(c1.low+c3.high)/2,low:c3.high,high:c1.low};
- }
- return null;
+  if(c1.high<c3.low) return {type:'BULL',mid:(c3.low+c1.high)/2,high:c3.low,low:c1.high};
+  if(c1.low>c3.high) return {type:'BEAR',mid:(c1.low+c3.high)/2,high:c1.low,low:c3.high};
+ }return null;
 }
-function draw(){
- if(candles.length<20){$('chart').innerHTML=`<text x="50%" y="50%" fill="#555" font-size="10" text-anchor="middle">${candles.length}/100 loading...</text>`;return;}
- const last=candles.slice(-80);let mn=Math.min(...last.map(c=>c.low)),mx=Math.max(...last.map(c=>c.high));
- const sp=mx-mn||1,toY=p=>170-((p-mn)/sp*140+10),toX=i=>(i/79)*300;
- let h=`<polyline fill="none" stroke="#33d6ff" stroke-width="1.2" points="${last.map((c,i)=>`${toX(i)},${toY(c.close)}`).join(' ')}"/>`;
- const f=detectFVG(candles);if(f){fvg=f;h+=`<line x1="0" y1="${toY(f.mid)}" x2="300" y2="${toY(f.mid)}" stroke="#ffcc00" stroke-dasharray="3 3"/>`;}
- $('chart').innerHTML=h;
+function drawSpark(){
+ const svg=document.getElementById('priceSpark');
+ const st=symbolState[focusSymbol];const src=st?st.m1Candles.slice(-100):[];
+ if(src.length<2){svg.innerHTML='';return;}
+ const w=680,h=180,pad=8,ys=src.map(c=>c.close),min=Math.min(...ys),max=Math.max(...ys),span=max-min||1;
+ const pts=src.map((c,i)=>{const x=pad+(i/(src.length-1))*(w-pad*2);const y=pad+(1-(c.close-min)/span)*(h-pad*2);return `${x.toFixed(1)},${y.toFixed(1)}`;});
+ const last=pts[pts.length-1].split(',');
+ let html=`<polyline fill="none" stroke="#3ddc84" stroke-width="2" points="${pts.join(' ')}"/><circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="#3ddc84"/>`;
+ const fvg=computeFVG(src);if(fvg){st.fvg=fvg;const toY=p=>pad+(1-(p-min)/span)*(h-pad*2);html+=`<line x1="0" y1="${toY(fvg.mid)}" x2="680" y2="${toY(fvg.mid)}" stroke="#ffcc00" stroke-dasharray="4 4"/>`;}
+ svg.innerHTML=html;
 }
 function genSignal(type,entry){
- const stake=parseFloat($('stake').value)||2.60;
+ const stake=parseFloat(document.getElementById('stakeInput').value)||2.60;
  const exit=type==='BEAR'?entry-2.469:entry+2.469;
  const profit=(2.469*stake).toFixed(2);
  const label=type==='BEAR'?'sell':'buy';
- const cls=label;
- const html=`<div class="signal"><div class="left"><div class="top">Crash 300 Index, <span class="${cls}">${label} ${stake.toFixed(2)}</span></div><div class="mid">${entry.toFixed(3)} → ${exit.toFixed(3)}</div></div><div class="profit">${profit}</div></div>`;
- $('list').innerHTML=html+$('list').innerHTML;sigCount++;$('count').textContent=sigCount+' signals';
- log(`SIGNAL ${label} ${entry.toFixed(3)}→${exit.toFixed(3)} profit ${profit}`);
+ const html=`<div class="signal"><div><div class="top">Crash 300 Index, <span class="sell">${label} ${stake.toFixed(2)}</span></div><div style="font-size:13px;color:#7a7a7a">${entry.toFixed(3)} → ${exit.toFixed(3)}</div></div><div class="profit">${profit}</div></div>`;
+ document.getElementById('sigList').innerHTML=html+document.getElementById('sigList').innerHTML;
+ document.getElementById('sessionMeta').textContent=(document.getElementById('sigList').children.length)+' signals';
+ logLine(`SIGNAL ${label} ${entry.toFixed(3)}→${exit.toFixed(3)} profit ${profit}`,'buy');
 }
 function connect(){
- if(ws&&ws.readyState===1) ws.close();
- setStatus('CONNECTING...',false);log('Connecting wss://ws.derivws.com app_id '+APP_ID);
- // try primary, fallback to binaryws
- const url=`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`;
- ws=new WebSocket(url);
- let opened=false;
- ws.onopen=()=>{
-  opened=true;setStatus('WS OPEN - loading CRASH300',true);log('WS OPEN');
-  ws.send(JSON.stringify({ticks_history:'CRASH300',count:100,end:'latest',granularity:60,style:'candles'}));
-  // keep alive ping every 25s (Deriv closes idle)
-  clearInterval(pingTimer);pingTimer=setInterval(()=>{if(ws.readyState===1) ws.send(JSON.stringify({ping:1}));},25000);
-  $('connBtn').textContent='CONNECTED';
+ const ep=WS_ENDPOINTS[endpointIdx%WS_ENDPOINTS.length];currentEp=ep;setConn(false,'connecting · '+ep.short);
+ let sock;try{sock=new WebSocket(ep.url);}catch(e){logLine('WS create fail '+e.message,'warn');endpointIdx++;setTimeout(connect,3000);return;}
+ ws=sock;
+ sock.onopen=()=>{
+  lastMsgAt=Date.now();setConn(false,'loading candles · '+ep.short);logLine('socket open · '+ep.name,'info');
+  Object.keys(symbolState).forEach(sym=>{wsSend({ticks_history:sym,count:200,end:'latest',granularity:60,style:'candles'});});
+  clearInterval(pingTimer);pingTimer=setInterval(()=>wsSend({ping:1}),25000);
  };
- ws.onmessage=e=>{
-  const d=JSON.parse(e.data);
-  if(d.msg_type==='candles'){candles=d.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close}));log(`Candles ${candles.length} loaded`);draw();ws.send(JSON.stringify({ticks:'CRASH300',subscribe:1}));setStatus('LIVE: CRASH300 TICKING',true);}
-  if(d.msg_type==='tick'){
-   lastPrice=+d.tick.quote;$('price').textContent=lastPrice.toFixed(3);
-   if(candles.length>0){candles[candles.length-1].close=lastPrice;candles[candles.length-1].high=Math.max(candles[candles.length-1].high,lastPrice);candles[candles.length-1].low=Math.min(candles[candles.length-1].low,lastPrice);draw();}
-   if(auto&&fvg){const dist=Math.abs(lastPrice-fvg.mid);if(dist<0.6&&Date.now()-window.lastSig>15000){genSignal(fvg.type,fvg.mid);window.lastSig=Date.now();}}
+ sock.onmessage=msg=>{
+  lastMsgAt=Date.now();let data;try{data=JSON.parse(msg.data)}catch{return;}
+  if(data.error){logLine('API error '+data.error.message,'warn');setConn(false,data.error.message);return;}
+  if(data.msg_type==='candles'&&Array.isArray(data.candles)){
+   const sym=data.echo_req.ticks_history;const st=symbolState[sym];if(!st)return;
+   st.m1Candles=data.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close,epoch:c.epoch}));
+   if(sym===focusSymbol){document.getElementById('mainTitle').textContent=st.name+' — LIVE';document.getElementById('sessionPnl').textContent=(st.m1Candles[st.m1Candles.length-1]?.close||0).toFixed(3);drawSpark();}
+   if(!subscribedTicksSet.has(sym)){wsSend({ticks:sym,subscribe:1});subscribedTicksSet.add(sym);}
+   setConn(true,'live · '+ep.short);renderScanner();
   }
-  if(d.error){log('Deriv error: '+d.error.message);setStatus(d.error.message,false);}
+  if(data.msg_type==='tick'&&data.tick){
+   const sym=data.tick.symbol;const st=symbolState[sym];if(!st)return;
+   const price=+data.tick.quote;st.lastPrice=price;
+   const epoch=Math.floor(data.tick.epoch/60)*60;const last=st.m1Candles[st.m1Candles.length-1];
+   if(last&&last.epoch===epoch){last.high=Math.max(last.high,price);last.low=Math.min(last.low,price);last.close=price;}else{st.m1Candles.push({open:price,high:price,low:price,close:price,epoch});if(st.m1Candles.length>300)st.m1Candles.shift();}
+   if(sym===focusSymbol){document.getElementById('sessionPnl').textContent=price.toFixed(3);drawSpark();
+    const fvg=computeFVG(st.m1Candles);if(fvg){document.getElementById('sniperBanner').className='sniper-banner sell';document.getElementById('sniperBanner').innerHTML=`FVG ${fvg.type} — ${fvg.mid.toFixed(3)}<div class="sniper-sub">Touch to generate signal</div>`;
+     if(Math.abs(price-fvg.mid)<0.6&&Date.now()-(window.lastSig||0)>15000){genSignal(fvg.type,fvg.mid);window.lastSig=Date.now();}
+    }
+   }
+   renderScanner();
+  }
  };
- ws.onclose=(e)=>{
-  clearInterval(pingTimer);setStatus(`CLOSED code ${e.code} - tap CONNECT`,false);log(`WS closed code ${e.code} reason ${e.reason||'none'}`);$('connBtn').textContent='CONNECT';
-  if(!opened){log('Failed immediately - trying fallback wss://ws.binaryws.com');setTimeout(()=>{ws=new WebSocket(`wss://ws.binaryws.com/websockets/v3?app_id=${APP_ID}`);ws.onopen=()=>{setStatus('WS OPEN (fallback)',true);ws.send(JSON.stringify({ticks_history:'CRASH300',count:100,end:'latest',granularity:60,style:'candles'}));};ws.onmessage=ws.onmessage;},1500);}
- };
- ws.onerror=()=>{log('WS onerror');setStatus('WS ERROR - tap CONNECT',false);};
+ sock.onclose=e=>{clearInterval(pingTimer);setConn(false,`closed ${e.code} - retry`);logLine(`closed ${e.code} ${e.reason||''}`,'warn');failCount++;endpointIdx++;setTimeout(connect,2000);};
+ sock.onerror=()=>{try{sock.close()}catch{}};
 }
-function toggleAuto(){auto=!auto;$('autoBtn').textContent=auto?'AUTO: ON':'AUTO: OFF';log(auto?'Auto ON':'Auto OFF');}
-window.lastSig=0;
-// auto connect on load
-setTimeout(connect,800);
-setInterval(()=>{if(candles.length>0) draw();},1000);
-</script></body></html>
+function renderScanner(){
+ const body=document.getElementById('scanBody');
+ body.innerHTML=Object.keys(symbolState).map(sym=>{
+  const st=symbolState[sym];const fvg=computeFVG(st.m1Candles);const status=fvg?`FVG ${fvg.type}`:st.lastPrice?'LIVE':'—';
+  return `<div class="scan-row ${sym===focusSymbol?'focused':''}" onclick="focusSymbol='${sym}';drawSpark()"><span>${sym}</span><span>—</span><span>${st.lastPrice?st.lastPrice.toFixed(0):'—'}</span><span>${status}</span></div>`;
+ }).join('');
+}
+connect();
+setInterval(drawSpark,1000);
+</script>
+</body>
+</html>
