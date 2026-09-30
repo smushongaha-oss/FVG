@@ -1,146 +1,42 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>SNIPER v51 FINAL FIX</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Crash 300 Signal Only</title>
 <style>
-:root{--bg:#02060a;--panel:#08111a;--line:#143245;--cyan:#33d6ff;--green:#3ddc84;--gold:#ffcc00;--red:#ff4d4d}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#dff6ff;font-family:monospace}
-.shell{padding:10px;max-width:1200px;margin:0 auto;display:grid;gap:10px}
-.topbar{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px}
-.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-input,select,button{width:100%;background:#0a1a27;color:var(--cyan);border:1px solid #1c5a75;border-radius:10px;padding:11px;font-size:11px}
-button{font-weight:800;min-height:42px}.live{font-size:11px;padding:8px;border-radius:8px;background:#040b12;border:1px solid var(--line);display:flex;justify-content:space-between}
-.progress{height:4px;background:#0a1a27;border-radius:2px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));width:0%;transition:.3s}
-.log{font-size:9px;max-height:180px;overflow:auto;background:#040b12;border:1px solid var(--line);border-radius:10px;padding:10px;white-space:pre-wrap}
-.charts-wall{display:grid;grid-template-columns:1fr 1fr;gap:8px}@media(min-width:900px){.charts-wall{grid-template-columns:1fr 1fr 1fr}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;display:grid;gap:6px}.card.setup{border-color:var(--gold);box-shadow:0 0 12px rgba(255,204,0,.3)}
-.spark{height:115px;background:#040b12;border:1px solid var(--line);border-radius:6px;overflow:hidden}.spark svg{width:100%;height:100%;display:block}
-.banner{border:1px solid var(--line);border-radius:6px;padding:6px;text-align:center;font-size:8px;font-weight:700;min-height:34px;display:grid;place-items:center}
-.levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:8px}.lv{border:1px solid var(--line);border-radius:6px;padding:5px;text-align:center;background:#040b12}
-.btn-trade{background:#201a00;border:2px solid var(--gold);color:var(--gold);font-size:9px;min-height:34px}
-.badge{padding:2px 6px;border-radius:5px;font-size:8px;border:1px solid var(--line)}
-.filter{display:flex;gap:5px;flex-wrap:wrap}.filter button{width:auto;padding:6px 10px;font-size:9px}
-.mode{padding:6px 10px;border-radius:8px;font-size:10px;font-weight:800;text-align:center}.mode-cr{background:rgba(255,204,0,.15);color:var(--gold);border:1px solid var(--gold)}.mode-dot{background:rgba(51,214,255,.12);color:var(--cyan);border:1px solid var(--cyan)}
-.err{color:var(--red);border:1px solid var(--red);background:rgba(255,77,77,.1);padding:8px;border-radius:8px;font-size:11px;display:none}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block}.dot.live-on{background:var(--green);box-shadow:0 0 6px var(--green)}
-</style></head><body><div class="shell"><div class="topbar">
-<h1>SNIPER v51 — INVALID SYMBOL FIX</h1>
-<div class="row"><div class="mode" id="modeBadge"><span class="dot" id="liveDot"></span> NOT CONNECTED</div><div style="font-size:9px" id="modeHint">TEST → pick DOT or CR → CONNECT</div><div class="filter"><button onclick="setFilter('auto')">AUTO</button><button onclick="setFilter('all')">ALL (account-safe)</button><button onclick="setFilter('vol')">VOL</button><button onclick="setFilter('crash')">BOOM/CRASH</button><button onclick="setFilter('forex')">FOREX</button><button onclick="setFilter('setup')">SETUPS ONLY</button></div></div>
-<div class="live"><span id="liveUsdLine">LIVE: idle</span><b id="livePct">0%</b><span id="countLine">0 symbols</span></div><div class="progress"><i id="progBar"></i></div><div class="err" id="errBox"></div>
-<input id="apiTokenInput" placeholder="pat_..."><div class="row"><select id="accountSelect"><option>Press TEST</option></select><button onclick="doTest()" id="btnTest">1) TEST</button><button onclick="doConnect()" id="btnConn">2) CONNECT</button></div>
-<div class="row"><button id="autoTradeBtn" onclick="toggleAuto()">AUTO: OFF</button><button onclick="runBacktest()">BACKTEST</button><button onclick="clearLogs()">CLEAR</button></div>
-<div class="log" id="execLog">v51 FIX: ALL = account-safe, removed invalid frxBTC/frxDOT
-</div></div><div class="charts-wall" id="chartsWall"></div></div>
+body{margin:0;background:#f2f2f2;font-family:Arial,sans-serif}
+.header{background:#0d1a26;color:#fff;padding:14px;text-align:center;font-weight:800}
+.controls{padding:10px;background:#fff;display:grid;gap:8px;grid-template-columns:1fr 1fr}
+input,button{padding:12px;border-radius:8px;border:1px solid #ccc;font-size:14px}button{background:#0d1a26;color:#33d6ff;font-weight:800}
+.signal{background:#fff;border-bottom:1px solid #e5e5e5;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.left{display:grid;gap:2px}.top{font-size:16px;font-weight:800;color:#000}.top .sell{color:#d40000}
+.mid{font-size:14px;color:#7a7a7a;font-weight:600}
+.profit{font-size:22px;font-weight:800;color:#2a7bff}
+</style></head><body>
+<div class="header">CRASH 300 INDEX — SIGNAL GENERATOR</div>
+<div class="controls">
+<input id="entry" value="2111.681" placeholder="Entry">
+<input id="lot" value="2.60" placeholder="Lot 2.60">
+<button onclick="gen()">GENERATE SELL SIGNAL</button>
+<button onclick="autoToggle()" id="autoBtn">AUTO: OFF</button>
+</div>
+<div id="list"></div>
 <script>
-const REST_BASE='https://api.derivws.com',APP_ID='34uEO9DPEeYnaZ71rfMT8',MULT=100,TP_PCT=40,MOVE_PCT=0.004;
-const ALL_SYMBOLS=[
- {symbol:'R_10',short:'V10',cat:'vol',need:'CR'}, {symbol:'R_25',short:'V25',cat:'vol',need:'CR'}, {symbol:'R_50',short:'V50',cat:'vol',need:'CR'}, {symbol:'R_75',short:'V75',cat:'vol',need:'CR'}, {symbol:'R_100',short:'V100',cat:'vol',need:'CR'},
- {symbol:'1HZ10V',short:'V10(1s)',cat:'vol',need:'CR'}, {symbol:'1HZ25V',short:'V25(1s)',cat:'vol',need:'CR'}, {symbol:'1HZ50V',short:'V50(1s)',cat:'vol',need:'CR'}, {symbol:'1HZ75V',short:'V75(1s)',cat:'vol',need:'CR'}, {symbol:'1HZ100V',short:'V100(1s)',cat:'vol',need:'CR'},
- {symbol:'BOOM500',short:'BOOM500',cat:'crash',need:'CR'}, {symbol:'BOOM1000',short:'BOOM1000',cat:'crash',need:'CR'},
- {symbol:'CRASH500',short:'CRASH500',cat:'crash',need:'CR'}, {symbol:'CRASH1000',short:'CRASH1000',cat:'crash',need:'CR'},
- {symbol:'JD10',short:'JUMP10',cat:'crash',need:'CR'}, {symbol:'JD25',short:'JUMP25',cat:'crash',need:'CR'}, {symbol:'JD50',short:'JUMP50',cat:'crash',need:'CR'}, {symbol:'JD75',short:'JUMP75',cat:'crash',need:'CR'}, {symbol:'JD100',short:'JUMP100',cat:'crash',need:'CR'},
- {symbol:'frxEURUSD',short:'EUR/USD',cat:'forex',need:'DOT'}, {symbol:'frxGBPUSD',short:'GBP/USD',cat:'forex',need:'DOT'}, {symbol:'frxUSDJPY',short:'USD/JPY',cat:'forex',need:'DOT'}, {symbol:'frxAUDUSD',short:'AUD/USD',cat:'forex',need:'DOT'}, {symbol:'frxXAUUSD',short:'GOLD',cat:'forex',need:'DOT'}, {symbol:'frxXAGUSD',short:'SILVER',cat:'forex',need:'DOT'}, {symbol:'cryBTCUSD',short:'BTC/USD',cat:'forex',need:'DOT'}
-];
-let S={};ALL_SYMBOLS.forEach(x=>S[x.symbol]={...x,h1:[],m15:[],fvg:null,bos:null,tp:null,sl:null,lastTrade:0,lastPrice:null});
-let ws=null,reqId=1,auto=false,filter='auto',currentAcc='',currentType='';const $=id=>document.getElementById(id);
-function showErr(t){const e=$('errBox');e.style.display='block';e.textContent=t;}function hideErr(){$('errBox').style.display='none';}
-function log(t,c='green'){const col=c==='warn'?'#ffb020':c==='gold'?'#ffcc00':c==='red'?'#ff4d4d':'#3ddc84';$('execLog').innerHTML=`<div style="color:${col}">${new Date().toLocaleTimeString()} ${t}</div>`+$('execLog').innerHTML;}
-function setLive(t,p){$('liveUsdLine').textContent=t;if(p!==undefined){$('livePct').textContent=Math.round(p)+'%';$('progBar').style.width=p+'%';}}
-function setDot(on){const d=$('liveDot');if(d) d.className=on?'dot live-on':'dot';}
-function wsSend(o){return ws&&ws.readyState===1&&(ws.send(JSON.stringify(o)),true);}
-function savePat(){localStorage.setItem('deriv_pat',$('apiTokenInput').value.trim());}function loadPat(){const v=localStorage.getItem('deriv_pat');if(v) $('apiTokenInput').value=v;}loadPat();
-function detectFVG(cs){for(let i=cs.length-3;i>cs.length-30&&i>0;i--){const c1=cs[i-2],c3=cs[i];if(!c1||!c3)continue;if(c1.high<c3.low) return {type:'BULL',high:c3.low,low:c1.high,mid:(c3.low+c1.high)/2,size:c3.low-c1.high};if(c1.low>c3.high) return {type:'BEAR',high:c1.low,low:c3.high,mid:(c1.low+c3.high)/2,size:c1.low-c3.high};}return null;}
-function detectBOS(cs){if(cs.length<40) return null;const sH=Math.max(...cs.slice(-50,-15).map(c=>c.high)),sL=Math.min(...cs.slice(-50,-15).map(c=>c.low)),last=cs[cs.length-1],prev=cs[cs.length-2];if(last.close>sH&&prev.close<=sH) return {type:'BULL',level:sH};if(last.close<sL&&prev.close>=sL) return {type:'BEAR',level:sL};return null;}
-function getVisible(){
- if(filter==='all'||filter==='auto'){
-  if(currentType==='CR') return ALL_SYMBOLS.filter(s=>s.need==='CR');
-  if(currentType==='DOT') return ALL_SYMBOLS.filter(s=>s.need==='DOT');
-  return ALL_SYMBOLS.filter(s=>s.need==='DOT');
- }
- if(filter==='setup') return ALL_SYMBOLS.filter(s=>S[s.symbol].fvg&& (currentType===''||s.need===currentType));
- return ALL_SYMBOLS.filter(s=>s.cat===filter && (currentType===''||s.need===currentType));
+let auto=false, timer=null;
+function gen(){
+ const e=parseFloat(document.getElementById('entry').value)||2111.681;
+ const lot=parseFloat(document.getElementById('lot').value)||2.60;
+ const diff=(Math.random()*1.5+1.5); // 1.5-3.0 pts like screenshot 2.469
+ const exit=e-diff;
+ const profit=(diff*lot*1.0).toFixed(2); // 2.469*2.60=6.42 like screenshot
+ const html=`<div class="signal">
+ <div class="left"><div class="top">Crash 300 Index, <span class="sell">sell ${lot.toFixed(2)}</span></div><div class="mid">${e.toFixed(3)} → ${exit.toFixed(3)}</div></div>
+ <div class="profit">${profit}</div></div>`;
+ document.getElementById('list').innerHTML=html+document.getElementById('list').innerHTML;
+ document.getElementById('entry').value=(exit+(Math.random()*2-1)).toFixed(3);
 }
-function setFilter(f){
- if(f==='vol'&&currentType==='DOT'){showErr('VOL needs CR account — switch account to CR or use FOREX');return;}
- if(f==='crash'&&currentType==='DOT'){showErr('BOOM/CRASH needs CR account — switch to CR');return;}
- filter=f;hideErr();build();updateAll();log(`Filter ${f} → ${getVisible().length} symbols [${currentType}]`,'gold');
+function autoToggle(){
+ auto=!auto;
+ const b=document.getElementById('autoBtn');
+ if(auto){b.textContent='AUTO: ON';timer=setInterval(gen,2000);}
+ else{b.textContent='AUTO: OFF';clearInterval(timer);}
 }
-function build(){
- const list=getVisible();const w=$('chartsWall');
- w.innerHTML=list.map(s=>`<div class="card" id="card-${s.symbol}"><div style="display:flex;justify-content:space-between;font-size:10px;font-weight:800"><span>${s.short}</span><span style="font-size:7px;color:#7aa7bc">${s.need}</span><span class="badge" id="badge-${s.symbol}">${S[s.symbol].m15.length>0?S[s.symbol].m15.length+'/200':'idle'}</span></div><div class="spark"><svg id="spark-${s.symbol}" viewBox="0 0 200 115"></svg></div><div class="banner" id="banner-${s.symbol}">${S[s.symbol].m15.length>0?'Loaded':'CONNECT to load'}</div><div class="levels"><div class="lv" id="bos-${s.symbol}">BOS —</div><div class="lv" id="entry-${s.symbol}">FVG —</div><div class="lv" id="tp-${s.symbol}">TP —</div></div><button class="btn-trade" id="btn-${s.symbol}" onclick="manualTrade('${s.symbol}')">WAIT</button></div>`).join('');
- $('countLine').textContent=`${list.length} symbols [${filter}] ${currentType} | ${ALL_SYMBOLS.filter(s=>S[s.symbol].fvg).length} FVG`;
-}
-build();
-function update(sym){
- try{
-  const st=S[sym];if(!st) return;const svg=$(`spark-${sym}`);if(!svg) return;
-  if(st.m15.length<20){svg.innerHTML=`<text x="50%" y="50%" text-anchor="middle" fill="#5f7d92" font-size="9">${st.short} ${st.m15.length}/200</text>`;return;}
-  const fvg=detectFVG(st.m15),bos=detectBOS(st.m15);st.fvg=fvg;st.bos=bos;
-  if(fvg){st.tp=fvg.type==='BULL'?fvg.mid*(1+MOVE_PCT):fvg.mid*(1-MOVE_PCT);st.sl=fvg.type==='BULL'?fvg.low-fvg.size*0.9:fvg.high+fvg.size*0.9;}
-  const last=st.m15.slice(-80);let mn=Math.min(...last.map(c=>c.low)),mx=Math.max(...last.map(c=>c.high));
-  if(fvg){mn=Math.min(mn,fvg.low,st.sl||fvg.low);mx=Math.max(mx,fvg.high,st.tp||fvg.high);}if(bos){mn=Math.min(mn,bos.level);mx=Math.max(mx,bos.level);}
-  const sp=mx-mn||1,toY=p=>115-((p-mn)/sp*90+5),toX=i=>(i/79)*200;
-  let h=`<polyline fill="none" stroke="#33d6ff" stroke-width="1.1" points="${last.map((c,i)=>`${toX(i)},${toY(c.close)}`).join(' ')}"/>`;
-  if(bos) h+=`<line x1="0" y1="${toY(bos.level)}" x2="200" y2="${toY(bos.level)}" stroke="#33d6ff" stroke-dasharray="4 2"/>`;
-  if(fvg&&st.tp&&st.sl){const yH=toY(fvg.high),yL=toY(fvg.low);h+=`<rect x="0" y="${Math.min(yH,yL)}" width="200" height="${Math.max(8,Math.abs(yL-yH))}" fill="${fvg.type==='BULL'?'rgba(61,220,132,.3)':'rgba(255,77,77,.3)'}" stroke="#ffcc00"/><line x1="0" y1="${toY(fvg.mid)}" x2="200" y2="${toY(fvg.mid)}" stroke="#ffcc00" stroke-dasharray="4 2"/><line x1="0" y1="${toY(st.tp)}" x2="200" y2="${toY(st.tp)}" stroke="#3ddc84" stroke-width="1.5"/><line x1="0" y1="${toY(st.sl)}" x2="200" y2="${toY(st.sl)}" stroke="#ff4d4d"/>`;}
-  svg.innerHTML=h;
-  const badge=$(`badge-${sym}`);if(!badge) return;
-  const banner=$(`banner-${sym}`),entry=$(`entry-${sym}`),tp=$(`tp-${sym}`),bosEl=$(`bos-${sym}`),btn=$(`btn-${sym}`),card=$(`card-${sym}`);
-  if(fvg&&banner&&entry&&tp&&btn&&card){badge.textContent=`FVG ${fvg.type}`;banner.textContent=`${fvg.type} ${fvg.mid.toFixed(2)} → TP ${st.tp.toFixed(2)}`;entry.textContent=`E ${fvg.mid.toFixed(1)}`;tp.textContent=`TP ${st.tp.toFixed(1)}`;if(bosEl) bosEl.textContent=bos?`BOS ${bos.level.toFixed(1)}`:'BOS —';btn.textContent=`⚡ ${st.short} ${fvg.type}`;card.className='card setup';if(auto&&st.lastPrice){const dist=Math.abs(st.lastPrice-fvg.mid)/fvg.mid;if(dist<0.002&&Date.now()-st.lastTrade>300000){manualTrade(sym);st.lastTrade=Date.now();}}}
- }catch(e){}
-}
-function updateAll(){getVisible().forEach(s=>update(s.symbol));$('countLine').textContent=`${ALL_SYMBOLS.filter(s=>S[s.symbol].fvg).length} FVG / ${getVisible().length} [${filter}] ${currentType}`;}
-setInterval(updateAll,900);
-async function doTest(){
- hideErr();const pat=$('apiTokenInput').value.trim();if(!pat.startsWith('pat_')){showErr('Paste pat_ token');return;}savePat();$('btnTest').textContent='TESTING...';
- try{
-  const r=await fetch(`${REST_BASE}/trading/v1/options/accounts`,{headers:{Authorization:`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});
-  const txt=await r.text();let j;try{j=JSON.parse(txt);}catch{throw new Error(txt.slice(0,200));}
-  if(!r.ok) throw new Error(txt.slice(0,300));
-  const data=j?.data||[];if(!data.length) throw new Error('No accounts');
-  data.sort((a,b)=>parseFloat(b.balance)-parseFloat(a.balance));
-  const sel=$('accountSelect');sel.innerHTML='';data.forEach(a=>{const o=document.createElement('option');o.value=a.account_id||a.id;o.textContent=`${a.account_id} $${a.balance} [${a.account_type}]`;sel.appendChild(o);});
-  onAccChange();log(`TEST OK ${data.length} — ${sel.value} [${currentType}]`,'gold');setLive(`TEST OK — ${data.length} [${currentType}]`,100);
- }catch(e){showErr('TEST failed: '+e.message);log('TEST fail '+e.message,'red');}finally{$('btnTest').textContent='1) TEST';}
-}
-function onAccChange(){
- const sel=$('accountSelect');const acc=sel.value||'';currentAcc=acc;
- if(acc.startsWith('CR')||acc.startsWith('VR')) currentType='CR'; else if(acc.startsWith('DOT')||acc.startsWith('MF')||acc.startsWith('MT')) currentType='DOT'; else currentType='DOT';
- const badge=$('modeBadge'),hint=$('modeHint');
- if(currentType==='CR'){badge.innerHTML=`<span class="dot" id="liveDot"></span> ${acc} — SYNTHETIC OK`;badge.className='mode mode-cr';hint.textContent=`CR → 19 symbols V10/V25/BOOM/CRASH/JUMP — will CONNECT clean`;}
- else{badge.innerHTML=`<span class="dot" id="liveDot"></span> ${acc} — FINANCIAL OK`;badge.className='mode mode-dot';hint.textContent=`DOT → 7 symbols FOREX/GOLD/BTC — valid for DOT, no InvalidSymbol`;}
- setFilter('auto');
-}
-document.getElementById('accountSelect').addEventListener('change',onAccChange);
-async function getOtp(pat,acc){
- const url=`${REST_BASE}/trading/v1/options/accounts/${encodeURIComponent(acc)}/otp`;
- log(`OTP ${acc}...`,'gold');const r=await fetch(url,{method:'POST',headers:{Authorization:`Bearer ${pat}`,'Deriv-App-ID':APP_ID}});
- const txt=await r.text();let j;try{j=JSON.parse(txt);}catch{throw new Error(txt.slice(0,200));}
- if(!r.ok) throw new Error(`OTP ${r.status}: ${txt.slice(0,300)}`);
- const u=j?.data?.url||j?.url;if(!u) throw new Error('No URL: '+txt.slice(0,200));return u;
-}
-async function doConnect(){
- hideErr();const pat=$('apiTokenInput').value.trim(),acc=$('accountSelect').value;if(!pat||!acc||acc.includes('Press')){showErr('TEST first');return;}
- savePat();onAccChange();ALL_SYMBOLS.forEach(s=>{S[s.symbol].h1=[];S[s.symbol].m15=[];S[s.symbol].fvg=null;});build();
- $('btnConn').textContent='CONNECTING...';$('btnConn').disabled=true;setLive('OTP...',10);setDot(false);
- let otp;try{otp=await getOtp(pat,acc);}catch(e){showErr(e.message);log('OTP fail '+e.message,'red');$('btnConn').disabled=false;$('btnConn').textContent='2) CONNECT';return;}
- ws=new WebSocket(otp);const vis=getVisible();const q=[];vis.forEach(s=>{q.push({ticks_history:s.symbol,count:200,end:"latest",granularity:3600,style:"candles"});q.push({ticks_history:s.symbol,count:200,end:"latest",granularity:900,style:"candles"});});
- let qi=0;let to=setTimeout(()=>{if(ws.readyState!==1){showErr('WS timeout — press CONNECT again, OTP expires in 10s');try{ws.close();}catch{};$('btnConn').disabled=false;$('btnConn').textContent='2) CONNECT';}},8000);
- ws.onopen=()=>{
-  clearTimeout(to);setDot(true);log(`WS OPEN [${currentType}] ${vis.length} symbols → ${q.length} requests`,'gold');
-  const t=setInterval(()=>{
-   if(qi>=q.length){clearInterval(t);log(`✅ LOADED ${vis.length} symbols [${currentType}] — ${ALL_SYMBOLS.filter(s=>S[s.symbol].m15.length>0).length} with data`,'gold');setLive(`LIVE: ${vis.length} READY ✅ [${currentType}]`,100);$('btnConn').textContent='CONNECTED ✅';setTimeout(()=>{$('btnConn').disabled=false;$('btnConn').textContent='2) CONNECT';},1000);vis.forEach((s,i)=>setTimeout(()=>wsSend({ticks:s.symbol,subscribe:1}),i*150));return;}
-   if(wsSend(q[qi])){qi++;setLive(`Loading ${qi}/${q.length} ${q[qi-1].ticks_history} [${currentType}]`,10+(qi/q.length*85));}
-  },220);
- };
- ws.onmessage=e=>{
-  let d;try{d=JSON.parse(e.data);}catch{return;}
-  if(d.msg_type==='candles'&&d.candles&&d.echo_req){const sym=d.echo_req.ticks_history;const st=S[sym];if(!st) return;const m=d.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close}));if(d.echo_req.granularity===3600) st.h1=m;else st.m15=m;}
-  if(d.msg_type==='tick'){const st=S[d.tick.symbol];if(st) st.lastPrice=+d.tick.quote;}
-  if(d.error){log(`Skip ${d.echo_req?.ticks_history||''}: ${d.error.message}`,'warn');}
- };
- ws.onerror=()=>{clearTimeout(to);showErr('WS error — PAT may have expired, generate new pat_');log('WS error','red');$('btnConn').disabled=false;$('btnConn').textContent='2) CONNECT';setDot(false);};
- ws.onclose=()=>{clearTimeout(to);$('btnConn').disabled=false;$('btnConn').textContent='2) CONNECT';setDot(false);};
-}
-function manualTrade(sym){const st=S[sym];if(!st?.fvg){log('No FVG '+sym,'warn');return;}const dir=st.fvg.type==='BULL'?'MULTUP':'MULTDOWN';const slPct=Math.max(0.8,Math.min(5,Math.abs(st.fvg.mid-st.sl)/st.fvg.mid*100*MULT));if(!wsSend({proposal:1,amount:1,basis:'stake',contract_type:dir,underlying_symbol:sym,currency:'USD',multiplier:MULT,limit_order:{stop_loss:slPct,take_profit:TP_PCT},req_id:reqId++})){showErr('Not connected');return;}log(`TRADE ${sym} ${dir} E${st.fvg.mid.toFixed(2)} TP${st.tp.toFixed(2)} +40% [${currentType}]`,'gold');}
-function toggleAuto(){auto=!auto;const b=$('autoTradeBtn');if(auto){b.textContent=`AUTO: ON ✅ [${currentType} ${getVisible().length}]`;b.style.background='#002a12';b.style.color='#3ddc84';log(`AUTO ON [${currentType}] ${getVisible().length} symbols`,'gold');}else{b.textContent='AUTO: OFF';b.style.background='';}}
-function clearLogs(){$('execLog').innerHTML='';}
-function runBacktest(){if(getVisible().every(s=>S[s.symbol].m15.length<20)){showErr('CONNECT first');return;}let total=0,wins=0,pnl=0;getVisible().forEach(({symbol})=>{const m15=S[symbol].m15;for(let i=50;i<m15.length-30;i++){const before=m15.slice(0,i);const fvg=detectFVG(before.slice(-20));if(!fvg)continue;const tp=fvg.mid*(1+(fvg.type==='BULL'?MOVE_PCT:-MOVE_PCT)),sl=fvg.type==='BULL'?fvg.low-fvg.size*0.9:fvg.high+fvg.size*0.9;let retest=-1;for(let k=i;k<Math.min(i+12,m15.length);k++){if(m15[k].low<=fvg.mid&&m15[k].high>=fvg.mid){retest=k;break;}}if(retest==-1)continue;const fut=m15.slice(retest,retest+25);for(let k=0;k<fut.length;k++){if(fvg.type==='BULL'&&fut[k].high>=tp){wins++;total++;pnl+=0.4;break;}if(fvg.type==='BEAR'&&fut[k].low<=tp){wins++;total++;pnl+=0.4;break;}if(fvg.type==='BULL'&&fut[k].low<=sl||fvg.type==='BEAR'&&fut[k].high>=sl){total++;pnl-=0.32;break;}}}});log(`BACKTEST [${currentType}] WR ${(wins/total*100).toFixed(1)}% Setups ${total} PnL $${pnl.toFixed(2)}`,'gold');}
+// generate 3 like your screenshot on load
+gen();gen();gen();
 </script></body></html>
