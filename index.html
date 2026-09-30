@@ -15,7 +15,7 @@ button{font-weight:800;min-height:42px;cursor:pointer}
 .card-head{display:flex;justify-content:space-between;font-size:11px;font-weight:800}
 .card-badge{padding:3px 8px;border-radius:4px;font-size:10px;border:1px solid #123041}
 .badge-buy{color:#3ddc84;border-color:#3ddc84;background:rgba(61,220,132,.12)}.badge-sell{color:#ff4d4d;border-color:#ff4d4d;background:rgba(255,77,77,.12)}.badge-neutral{color:#5f7d92}
-.spark-box{height:120px;background:#040b12;border:1px solid #123041;border-radius:6px;overflow:hidden}.spark-box svg{width:100%;height:100%}
+.spark-box{height:140px;background:#040b12;border:1px solid #123041;border-radius:6px;overflow:hidden}.spark-box svg{width:100%;height:100%}
 .card-banner{border:1px solid #123041;border-radius:6px;padding:8px;text-align:center;font-size:10px;font-weight:800;min-height:42px;display:grid;place-items:center}
 .card-banner.buy{color:#3ddc84;border-color:#3ddc84;background:rgba(61,220,132,.08)}.card-banner.sell{color:#ff4d4d;border-color:#ff4d4d;background:rgba(255,77,77,.08)}.card-banner.neutral{color:#5f7d92}
 .levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:9px}
@@ -95,10 +95,23 @@ function updateCard(sym){
  if(!badge)return;
  const src=st.h4Candles.length>=2?st.h4Candles.slice(-60):st.h1Candles.slice(-60);
  if(src.length>=2&&svgEl){
-  let min=Math.min(...src.map(c=>c.close)),max=Math.max(...src.map(c=>c.close));const span=max-min||1;const toY=(p)=>120-((p-min)/span*90+10);
-  const pts=src.map((c,i)=>{const x=(i/(src.length-1))*200;const y=toY(c.close);return `${x.toFixed(1)},${y.toFixed(1)}`;});
+  // TP / SL / ENTRY lines with written labels
+  const levels=[];
+  if(st.entry)levels.push({p:st.entry,c:'#33d6ff',t:'ENTRY'});
+  if(st.sl)levels.push({p:st.sl,c:'#ff4d4d',t:'SL'});
+  if(st.tp1)levels.push({p:st.tp1,c:'#3ddc84',t:'TP'});
+  const closes=src.map(c=>c.close);
+  const min=Math.min(...closes,...levels.map(l=>l.p)),max=Math.max(...closes,...levels.map(l=>l.p));
+  const span=max-min||1;const toY=(p)=>110-((p-min)/span*100);
+  const pts=src.map((c,i)=>`${((i/(src.length-1))*200).toFixed(1)},${toY(c.close).toFixed(1)}`);
   const color=st.swingDir==='BUY'?'#3ddc84':st.swingDir==='SELL'?'#ff4d4d':'#33d6ff';
-  svgEl.innerHTML=`<polyline fill="none" stroke="${color}" stroke-width="1.8" points="${pts.join(' ')}"/>`;
+  let lines='';
+  levels.forEach(l=>{
+   const y=toY(l.p);const ty=Math.min(116,Math.max(8,y-2));
+   lines+=`<line x1="0" x2="200" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${l.c}" stroke-width="1" stroke-dasharray="4 3" opacity="0.9"/>`
+    +`<text x="198" y="${ty.toFixed(1)}" text-anchor="end" font-size="7" font-weight="700" font-family="Courier New,monospace" fill="${l.c}" stroke="#040b12" stroke-width="2" paint-order="stroke">${l.t} ${l.p.toFixed(2)}</text>`;
+  });
+  svgEl.innerHTML=`<polyline fill="none" stroke="${color}" stroke-width="1.8" points="${pts.join(' ')}"/>`+lines;
  }
  let status='NEUTRAL',cls='neutral',border='';
  if(st.h4Res&&st.h1Res){
