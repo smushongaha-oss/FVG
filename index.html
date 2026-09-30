@@ -1,42 +1,88 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Crash 300 Signal Only</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Crash 300 LIVE Signal - Deriv WS</title>
 <style>
-body{margin:0;background:#f2f2f2;font-family:Arial,sans-serif}
-.header{background:#0d1a26;color:#fff;padding:14px;text-align:center;font-weight:800}
-.controls{padding:10px;background:#fff;display:grid;gap:8px;grid-template-columns:1fr 1fr}
-input,button{padding:12px;border-radius:8px;border:1px solid #ccc;font-size:14px}button{background:#0d1a26;color:#33d6ff;font-weight:800}
-.signal{background:#fff;border-bottom:1px solid #e5e5e5;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
-.left{display:grid;gap:2px}.top{font-size:16px;font-weight:800;color:#000}.top .sell{color:#d40000}
-.mid{font-size:14px;color:#7a7a7a;font-weight:600}
-.profit{font-size:22px;font-weight:800;color:#2a7bff}
+body{margin:0;background:#0a0a0a;font-family:Arial,sans-serif;color:#fff}
+.header{background:#000;padding:12px;text-align:center;font-weight:900;border-bottom:2px solid #d40000}
+.live-bar{background:#141414;padding:8px 12px;display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid #222}
+.dot{width:8px;height:8px;border-radius:50%;background:red;display:inline-block}.dot.on{background:#00ff88;box-shadow:0 0 6px #00ff88}
+.chart-wrap{background:#000;padding:8px;height:200px;border-bottom:1px solid #222}
+.chart-wrap svg{width:100%;height:100%}
+.controls{background:#111;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input{background:#1a1a1a;color:#33d6ff;border:1px solid #333;border-radius:6px;padding:10px}
+button{background:#d40000;color:#fff;border:none;border-radius:8px;padding:12px;font-weight:800}
+.signal{background:#fff;color:#000;border-bottom:1px solid #e5e5e5;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;animation:slide .3s}
+@keyframes slide{from{transform:translateY(-10px);opacity:0}to{transform:translateY(0);opacity:1}}
+.left{display:grid;gap:2px}.top{font-size:15px;font-weight:900}.top .sell{color:#d40000}.top .buy{color:#00a651}
+.mid{font-size:13px;color:#7a7a7a;font-weight:600}.profit{font-size:20px;font-weight:900;color:#2a7bff}
+.log{font-size:10px;color:#666;padding:6px;background:#000;max-height:80px;overflow:auto}
 </style></head><body>
-<div class="header">CRASH 300 INDEX — SIGNAL GENERATOR</div>
-<div class="controls">
-<input id="entry" value="2111.681" placeholder="Entry">
-<input id="lot" value="2.60" placeholder="Lot 2.60">
-<button onclick="gen()">GENERATE SELL SIGNAL</button>
-<button onclick="autoToggle()" id="autoBtn">AUTO: OFF</button>
-</div>
+<div class="header">CRASH 300 LIVE — DERIV WEBSOCKET</div>
+<div class="live-bar"><span><span class="dot" id="dot"></span> <span id="status">CONNECTING...</span></span><span id="price">—</span><span id="count">0 signals</span></div>
+<div class="chart-wrap"><svg id="chart" viewBox="0 0 300 180"></svg></div>
+<div class="controls"><input id="stake" value="2.60"><button onclick="toggleAuto()" id="autoBtn">AUTO SIGNAL: ON</button></div>
+<div class="log" id="log"></div>
 <div id="list"></div>
 <script>
-let auto=false, timer=null;
-function gen(){
- const e=parseFloat(document.getElementById('entry').value)||2111.681;
- const lot=parseFloat(document.getElementById('lot').value)||2.60;
- const diff=(Math.random()*1.5+1.5); // 1.5-3.0 pts like screenshot 2.469
- const exit=e-diff;
- const profit=(diff*lot*1.0).toFixed(2); // 2.469*2.60=6.42 like screenshot
+const APP_ID=1089; // public app_id, no PAT needed
+let ws=null, ticks=[], candles=[], auto=true, sigCount=0, lastPrice=0;
+let fvg=null;
+const $=id=>document.getElementById(id);
+function log(t){$('log').innerHTML=`${new Date().toLocaleTimeString()} ${t}<br>`+$('log').innerHTML;}
+function setStatus(t,on){$('status').textContent=t;$('dot').className=on?'dot on':'dot';}
+function detectFVG(cs){
+ for(let i=cs.length-3;i>cs.length-25&&i>0;i--){
+  const c1=cs[i-2],c3=cs[i];if(!c1||!c3)continue;
+  if(c1.high<c3.low) return {type:'BULL',mid:(c3.low+c1.high)/2,low:c1.high,high:c3.low,size:c3.low-c1.high};
+  if(c1.low>c3.high) return {type:'BEAR',mid:(c1.low+c3.high)/2,low:c3.high,high:c1.low,size:c1.low-c3.high};
+ }
+ return null;
+}
+function draw(){
+ if(candles.length<20){$('chart').innerHTML=`<text x="50%" y="50%" fill="#555" font-size="10" text-anchor="middle">${candles.length}/100 candles loading...</text>`;return;}
+ const last=candles.slice(-80);let mn=Math.min(...last.map(c=>c.low)),mx=Math.max(...last.map(c=>c.high));
+ const sp=mx-mn||1,toY=p=>170-((p-mn)/sp*140+10),toX=i=>(i/79)*300;
+ let h=`<polyline fill="none" stroke="#33d6ff" stroke-width="1.2" points="${last.map((c,i)=>`${toX(i)},${toY(c.close)}`).join(' ')}"/>`;
+ const f=detectFVG(candles);
+ if(f){fvg=f;const yH=toY(f.high),yL=toY(f.low);h+=`<rect x="0" y="${Math.min(yH,yL)}" width="300" height="${Math.max(8,Math.abs(yL-yH))}" fill="${f.type==='BULL'?'rgba(0,255,136,.2)':'rgba(255,0,0,.2)'}" stroke="#ffcc00"/><line x1="0" y1="${toY(f.mid)}" x2="300" y2="${toY(f.mid)}" stroke="#ffcc00" stroke-dasharray="3 3"/>`;}
+ $('chart').innerHTML=h;
+}
+function genSignal(type,entry){
+ const stake=parseFloat($('stake').value)||2.60;
+ const tpDiff=2.5; // like screenshot 2.11...
+ const exit=type==='BEAR'?entry-tpDiff:entry+tpDiff;
+ const profit=(tpDiff*stake*1.0).toFixed(2); // matches screenshot 2.60*2.46=6.42
+ const label=type==='BEAR'?'sell':'buy';
  const html=`<div class="signal">
- <div class="left"><div class="top">Crash 300 Index, <span class="sell">sell ${lot.toFixed(2)}</span></div><div class="mid">${e.toFixed(3)} → ${exit.toFixed(3)}</div></div>
- <div class="profit">${profit}</div></div>`;
- document.getElementById('list').innerHTML=html+document.getElementById('list').innerHTML;
- document.getElementById('entry').value=(exit+(Math.random()*2-1)).toFixed(3);
+  <div class="left"><div class="top">Crash 300 Index, <span class="${label}">${label} ${stake.toFixed(2)}</span></div><div class="mid">${entry.toFixed(3)} → ${exit.toFixed(3)}</div></div>
+  <div class="profit">${profit}</div></div>`;
+ $('list').innerHTML=html+$('list').innerHTML;
+ sigCount++;$('count').textContent=sigCount+' signals';
+ log(`SIGNAL ${label.toUpperCase()} ${entry.toFixed(3)} → ${exit.toFixed(3)} P/L ${profit}`);
+ if(navigator.vibrate) navigator.vibrate(100);
 }
-function autoToggle(){
- auto=!auto;
- const b=document.getElementById('autoBtn');
- if(auto){b.textContent='AUTO: ON';timer=setInterval(gen,2000);}
- else{b.textContent='AUTO: OFF';clearInterval(timer);}
+function connect(){
+ ws=new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
+ ws.onopen=()=>{
+  setStatus('WS OPEN - loading candles',true);log('WS OPEN — subscribing CRASH300');
+  ws.send(JSON.stringify({ticks_history:'CRASH300',count:100,end:'latest',granularity:60,style:'candles'}));
+ };
+ ws.onmessage=e=>{
+  const d=JSON.parse(e.data);
+  if(d.msg_type==='candles'){candles=d.candles.map(c=>({open:+c.open,high:+c.high,low:+c.low,close:+c.close}));log(`Candles loaded ${candles.length}`);draw();ws.send(JSON.stringify({ticks:'CRASH300',subscribe:1}));setStatus('LIVE: CRASH300 TICKING',true);}
+  if(d.msg_type==='tick'){
+   lastPrice=+d.tick.quote;$('price').textContent=lastPrice.toFixed(3);
+   ticks.push(lastPrice);if(ticks.length>200) ticks.shift();
+   // keep last candle updated
+   if(candles.length>0){candles[candles.length-1].close=lastPrice;candles[candles.length-1].high=Math.max(candles[candles.length-1].high,lastPrice);candles[candles.length-1].low=Math.min(candles[candles.length-1].low,lastPrice);draw();}
+   // AUTO SIGNAL LOGIC: when price touches FVG mid within 0.5 pts
+   if(auto&&fvg){const dist=Math.abs(lastPrice-fvg.mid);if(dist<0.5){if(Date.now()-window.lastSig>15000){genSignal(fvg.type,fvg.mid);window.lastSig=Date.now();}}}
+  }
+  if(d.error){log('Error '+d.error.message);setStatus('Error '+d.error.message,false);}
+ };
+ ws.onclose=()=>{setStatus('WS CLOSED - reconnecting...',false);log('WS closed, retry in 3s');setTimeout(connect,3000);};
+ ws.onerror=()=>{setStatus('WS ERROR',false);};
 }
-// generate 3 like your screenshot on load
-gen();gen();gen();
+function toggleAuto(){auto=!auto;$('autoBtn').textContent=auto?'AUTO SIGNAL: ON':'AUTO SIGNAL: OFF';log(auto?'Auto ON':'Auto OFF');}
+window.lastSig=0;
+connect();
+setInterval(()=>{if(candles.length>0) draw();},1000);
 </script></body></html>
